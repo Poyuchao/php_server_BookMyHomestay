@@ -1,0 +1,5 @@
+.idea
+docker/*
+.vscode
+
+!www/.gitkeep
