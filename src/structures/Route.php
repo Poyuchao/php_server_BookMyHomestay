@@ -3,13 +3,19 @@
 require_once 'utils/stdout-log.php';
 require_once 'utils/send-response.php';
 
+
+//
 class Route
 {
-  public ?string $method = NULL;
-  public ?string $path = NULL;
-  public array $routeParts = [];
-  public $handler;
+  public ?string $method = NULL; // GET, POST, PUT, DELETE
+  public ?string $path = NULL;   // The URL path for the route
+  public array $routeParts = []; // An array to store segments of the path
+  public $handler;               // A callable that handles the route
 
+
+  //The constructor initializes the handler with a default function that sends a "405 Method Not Implemented" 
+  //error if no specific handler is assigned later. 
+  //This ensures that there's always a fallback handler to execute if routing configuration is incomplete.
   public function __construct()
   {
     $this->handler = function () {
@@ -17,11 +23,15 @@ class Route
     };
   }
 
+
+
   public function isMatch($method, $path)
   {
+    //Initializes an empty array $parameters to store parameters extracted from the path.
     $parameters = [];
 
-    // Check if method matches
+    // checks if the request's method matches the route's method. If not, 
+    //it logs the mismatch and returns false for the match, along with an empty parameters array.
     if ($this->method !== $method) {
       debugLog('[' . $this->__toString() . "] Method does not match: $this->method !== $method");
       return [
@@ -32,12 +42,18 @@ class Route
 
     // Split path into parts by '/'
     $pathParts = explode('/', $path);
+
+    //checks if the request's method matches the route's method. 
+    //If not, it logs the mismatch and returns false for the match, along with an empty parameters array.
     $pathParts = array_filter($pathParts, function ($value) {
       return $value !== '' && $value !== 'index.php';
     });
-    // Re-index array, because php stupidly doesn't do this by default
+    // Re-index array, because php stupidly doesn't do this by default,
+    // Re-indexes the array to ensure keys are sequential after filtering.
     $pathParts = array_values($pathParts);
 
+    //Compares the number of segments in the path with the number of segments in the predefined route.
+    //If they don't match, it logs the mismatch and returns false
     $routeParts = $this->routeParts;
 
     debugLog('Path parts: ' . json_encode($pathParts));
@@ -90,7 +106,7 @@ class RouteBuilder
     $this->route = new Route();
   }
 
-  public function setMethod(string $method)
+  public function setMethod(string $method) //
   {
     $this->route->method = $method;
     return $this;

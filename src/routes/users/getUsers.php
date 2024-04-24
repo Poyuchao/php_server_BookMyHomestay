@@ -18,10 +18,10 @@ $GET_USERS = (new RouteBuilder())
       ],
     ]);
   })
-  ->build();
+  ->build(); // This is the route object
 
 $GET_USER = (new RouteBuilder())
-  ->setMethod('GET')
+  ->setMethod('GET') 
   ->setPath('/users/:id')
   ->setHandler(function ($params) {
     send_response([
