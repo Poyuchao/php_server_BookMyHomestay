@@ -8,6 +8,8 @@ class Route
   public ?string $method = NULL;
   public ?string $path = NULL;
   public array $routeParts = [];
+  public bool $isAuthenticated = FALSE;
+  public bool $isAdmin = FALSE;
   public $handler;
 
   public function __construct()
@@ -78,52 +80,5 @@ class Route
   public function __toString()
   {
     return $this->method . ' ' . $this->path;
-  }
-}
-
-class RouteBuilder
-{
-  private $route;
-
-  public function __construct()
-  {
-    $this->route = new Route();
-  }
-
-  public function setMethod(string $method)
-  {
-    $this->route->method = $method;
-    return $this;
-  }
-
-  public function setPath(string $path)
-  {
-    $routeParts = explode('/', $path);
-    $routeParts = array_filter($routeParts, function ($value) {
-      return $value !== '';
-    });
-    $routeParts = array_values($routeParts);
-    $this->route->routeParts = $routeParts;
-    $this->route->path = $path;
-    return $this;
-  }
-
-  public function setHandler(callable $handler)
-  {
-    $this->route->handler = $handler;
-    return $this;
-  }
-
-  public function build()
-  {
-    if ($this->route->method === NULL) {
-      throw new Exception('Method is required');
-    }
-
-    if ($this->route->path === NULL) {
-      throw new Exception('Path is required');
-    }
-
-    return $this->route;
   }
 }

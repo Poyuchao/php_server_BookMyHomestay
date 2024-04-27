@@ -28,9 +28,9 @@ function executeRequest()
     $routeMatch = $route[$i]->isMatch($method, $path);
 
     if ($routeMatch['isMatch']) {
-      // $database = new Database();
+      $database = new Database();
 
-      $route[$i]->handler->__invoke($routeMatch['params']);
+      $route[$i]->handler->__invoke($routeMatch['params'], $database);
       return;
     }
   }
