@@ -8,9 +8,14 @@ $GET_USERS = (new RouteBuilder())
   ->setMethod('GET')
   ->setPath('/users')
   ->setHandler(function ($_, $database) {
+    $take = $_GET['take'] ?? 1000;
+    $skip = $_GET['skip'] ?? 0;
+
     $users = (new QueryBuilder($database->connection))
       ->select()
       ->from('users')
+      ->limit($take)
+      ->offset($skip)
       ->execute();
     send_response($users);
   })
