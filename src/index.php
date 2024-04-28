@@ -1,6 +1,6 @@
 <?php
 require_once 'utils/stdout-log.php';
-require_once './router.php';
+require_once 'router.php';
 
 stdoutLog('Hello, world!');
 

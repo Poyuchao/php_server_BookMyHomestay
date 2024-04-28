@@ -7,10 +7,12 @@ require_once 'utils/send-response.php';
 //
 class Route
 {
-  public ?string $method = NULL; // GET, POST, PUT, DELETE
-  public ?string $path = NULL;   // The URL path for the route
-  public array $routeParts = []; // An array to store segments of the path
-  public $handler;               // A callable that handles the route
+  public ?string $method = NULL;
+  public ?string $path = NULL;
+  public array $routeParts = [];
+  public bool $isAuthenticated = FALSE;
+  public bool $isAdmin = FALSE;
+  public $handler;
 
 
   //The constructor initializes the handler with a default function that sends a "405 Method Not Implemented" 
@@ -52,8 +54,13 @@ class Route
     // Re-indexes the array to ensure keys are sequential after filtering.
     $pathParts = array_values($pathParts);
 
-    //Compares the number of segments in the path with the number of segments in the predefined route.
-    //If they don't match, it logs the mismatch and returns false
+    $lastItem = end($pathParts);
+
+    if (str_contains($lastItem, '?')) {
+      $pathPlusQuery = explode('?', $lastItem);
+      $pathParts[count($pathParts) - 1] = $pathPlusQuery[0];
+    }
+
     $routeParts = $this->routeParts;
 
     debugLog('Path parts: ' . json_encode($pathParts));
@@ -94,52 +101,5 @@ class Route
   public function __toString()
   {
     return $this->method . ' ' . $this->path;
-  }
-}
-
-class RouteBuilder
-{
-  private $route;
-
-  public function __construct()
-  {
-    $this->route = new Route();
-  }
-
-  public function setMethod(string $method) //
-  {
-    $this->route->method = $method;
-    return $this;
-  }
-
-  public function setPath(string $path)
-  {
-    $routeParts = explode('/', $path);
-    $routeParts = array_filter($routeParts, function ($value) {
-      return $value !== '';
-    });
-    $routeParts = array_values($routeParts);
-    $this->route->routeParts = $routeParts;
-    $this->route->path = $path;
-    return $this;
-  }
-
-  public function setHandler(callable $handler)
-  {
-    $this->route->handler = $handler;
-    return $this;
-  }
-
-  public function build()
-  {
-    if ($this->route->method === NULL) {
-      throw new Exception('Method is required');
-    }
-
-    if ($this->route->path === NULL) {
-      throw new Exception('Path is required');
-    }
-
-    return $this->route;
   }
 }
