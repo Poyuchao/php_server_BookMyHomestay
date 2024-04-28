@@ -13,5 +13,7 @@ $loginRoute= (new RouteBuilder())
 
 
 function login($UserEmail){
-    $sql = "SELECT * FROM users WHERE email = '$UserEmail' ;";
+    $sql = "SELECT * FROM users WHERE email = '$UserEmail' ;" ;
+    
 }
+

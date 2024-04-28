@@ -5,7 +5,11 @@ require_once 'utils/send-response.php';
 
 class Database
 {
-  public $connection;
+  private $host = "localhost";
+  private $db_name ="homestay_database";
+  private $db_username = "";
+  private $db_password = "";
+  private $connection;
 
   function __construct()
   {

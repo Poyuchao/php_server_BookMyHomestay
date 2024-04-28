@@ -1,5 +1,6 @@
 <?php
 require_once 'routes/users/routes.php';
+require_once 'routes/login/login.php';
 require_once 'utils/send-response.php';
 require_once 'database/index.php';
 
@@ -9,6 +10,10 @@ $ROUTES = [
     $GET_USERS, //The $GET_USERS variable is an instance of the Route class that defines the route for getting all users.
     $GET_USER,  //The $GET_USER variable is an instance of the Route class that defines the route for getting a specific user.
   ],
+  'POST' => [
+    $loginRoute, //The $loginRoute variable is an instance of the Route class that defines the route for user login.
+
+  ]
 ];
 
 //handle HTTP requests in a PHP application.
