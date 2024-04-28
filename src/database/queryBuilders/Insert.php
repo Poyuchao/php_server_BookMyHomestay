@@ -71,7 +71,7 @@ class InsertQueryBuilder
     // Create a string of types to use in the bind_param function, e.g. 'sss'.
     $types = '';
     foreach ($this->values as $value) {
-      $types .= gettype($value)[0];
+      $types .= $this->queryBuilder->getBindValueType($value);
     }
 
     // Bind the values to the statement to prevent SQL injection.

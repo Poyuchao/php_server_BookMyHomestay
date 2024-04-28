@@ -50,6 +50,26 @@ class QueryBuilder
     return $this->connection->real_escape_string($name);
   }
 
+  /**
+   * Convert value to the bind parameter type.
+   */
+  function getBindValueType($value): string
+  {
+    // Return the bind parameter type based on the type of the value.
+    // Available types are: i - integer, d - double, s - string, b - BLOB (not implemented).
+    switch (gettype($value)) {
+      case 'integer':
+        return 'i';
+      case 'double':
+      case 'float':
+        return 'd';
+      case 'string':
+        return "s";
+      default:
+        return 's';
+    }
+  }
+
   function execute()
   {
     if (!isset($this->queryBuilder)) {

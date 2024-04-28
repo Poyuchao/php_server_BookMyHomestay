@@ -200,7 +200,7 @@ class SelectQueryBuilder
       $types = '';
       $values = [];
       foreach ($this->wheres as $where) {
-        $types .= gettype($where['value'])[0];
+        $types .= $this->queryBuilder->getBindValueType($where['value']);
         $values[] = $where['value'];
       }
 
