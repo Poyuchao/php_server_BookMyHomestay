@@ -40,6 +40,13 @@ class Route
     // Re-index array, because php stupidly doesn't do this by default
     $pathParts = array_values($pathParts);
 
+    $lastItem = end($pathParts);
+
+    if (str_contains($lastItem, '?')) {
+      $pathPlusQuery = explode('?', $lastItem);
+      $pathParts[count($pathParts) - 1] = $pathPlusQuery[0];
+    }
+
     $routeParts = $this->routeParts;
 
     debugLog('Path parts: ' . json_encode($pathParts));
