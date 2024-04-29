@@ -1,6 +1,5 @@
 <?php
-
-const ALLOWED_OPERATORS = ['=', '!=', '>', '<', '>=', '<=', 'ILIKE', 'LIKE', 'NOT LIKE', 'IN', 'NOT IN'];
+require_once 'database/constants.php';
 
 class SelectQueryBuilder
 {
@@ -36,6 +35,10 @@ class SelectQueryBuilder
    * The offset of rows to return.
    */
   private int $offset;
+  /**
+   * Return first row only.
+   */
+  private bool $first = false;
 
   /**
    * The constructor of the SelectQueryBuilder class.
@@ -137,6 +140,17 @@ class SelectQueryBuilder
   }
 
   /**
+   * Return the first row only.
+   * OBS: This will set the limit to 1.
+   */
+  function first(): SelectQueryBuilder
+  {
+    $this->limit = 1;
+    $this->first = true;
+    return $this;
+  }
+
+  /**
    * Build the query.
    */
   function buildQuery(): mysqli_stmt
@@ -188,6 +202,8 @@ class SelectQueryBuilder
       $query .= " OFFSET $this->offset";
     }
 
+    if (QUERY_BUILDER_SEE_DEBUG) print_r($query . "\n");
+
     // Prepare the query.
     $statement = $this->queryBuilder->connection->prepare($query);
 
@@ -206,6 +222,13 @@ class SelectQueryBuilder
 
       // Bind the values to the statement to prevent SQL injection.
       $statement->bind_param($types, ...$values);
+
+      if (QUERY_BUILDER_SEE_DEBUG) {
+        print_r($types);
+        echo PHP_EOL;
+        print_r($values);
+        echo PHP_EOL;
+      }
     }
 
     return $statement;
@@ -213,6 +236,7 @@ class SelectQueryBuilder
 
   /**
    * Execute the query against the database and return the result.
+   * If ->first() was called, will return the first row only or NULL if no rows were found.
    */
   function execute()
   {
@@ -222,6 +246,10 @@ class SelectQueryBuilder
     // Get the result of the query and return it.
     $result = $statement->get_result();
     $allRows = $result->fetch_all(MYSQLI_ASSOC);
+
+    if ($this->first) {
+      return count($allRows) > 0 ? $allRows[0] : NULL;
+    }
 
     // Close the statement and return the result.
     $statement->close();

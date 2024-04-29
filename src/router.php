@@ -8,6 +8,10 @@ $ROUTES = [
     $GET_USERS,
     $GET_USER,
   ],
+  'POST' => [
+    $POST_USERS,
+    $PATCH_USER,
+  ],
 ];
 
 function executeRequest()

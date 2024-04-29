@@ -2,6 +2,9 @@
 require_once 'database/index.php';
 require_once 'database/queryBuilders/Select.php';
 require_once 'database/queryBuilders/Insert.php';
+require_once 'database/queryBuilders/Update.php';
+
+define('QUERY_BUILDER_SEE_DEBUG', true);
 
 class QueryBuilder
 {
@@ -12,9 +15,9 @@ class QueryBuilder
   /**
    * The instance of the SelectQueryBuilder or InsertQueryBuilder class.
    */
-  private SelectQueryBuilder|InsertQueryBuilder $queryBuilder;
+  private SelectQueryBuilder|InsertQueryBuilder|UpdateQueryBuilder $queryBuilder;
 
-  function __construct($connection)
+  function __construct(mysqli $connection)
   {
     $this->connection = $connection;
   }
@@ -43,9 +46,18 @@ class QueryBuilder
   }
 
   /**
+   * Update data in the table.
+   */
+  function update(): UpdateQueryBuilder
+  {
+    $this->queryBuilder = new UpdateQueryBuilder($this);
+    return $this->queryBuilder;
+  }
+
+  /**
    * Sanitize the name of a column or table.
    */
-  function sanitizeName($name): string
+  function sanitizeName(string $name): string
   {
     return $this->connection->real_escape_string($name);
   }
@@ -53,7 +65,7 @@ class QueryBuilder
   /**
    * Convert value to the bind parameter type.
    */
-  function getBindValueType($value): string
+  function getBindValueType(mixed $value): string
   {
     // Return the bind parameter type based on the type of the value.
     // Available types are: i - integer, d - double, s - string, b - BLOB (not implemented).
@@ -77,5 +89,13 @@ class QueryBuilder
     }
 
     return $this->queryBuilder->execute();
+  }
+
+  /**
+   * Create a new instance of the QueryBuilder class.
+   */
+  public static function create(mysqli $connection)
+  {
+    return new QueryBuilder($connection);
   }
 }
