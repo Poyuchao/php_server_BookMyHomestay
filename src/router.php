@@ -35,7 +35,7 @@ function executeRequest()
   $route = $ROUTES[$method]; //get the routes for the specific HTTP method from the $ROUTES array.
 
 
-  //iterates over each route in the $route array and checks if the route matches the requested method and path.
+  //iterates over each route in the $route  array and checks if the route matches the requested method and path.
   for ($i = 0; $i < count($route); $i++) {
     //checks if the route matches the requested method and path using the isMatch method of the Route class.
     $routeMatch = $route[$i]->isMatch($method, $path);
