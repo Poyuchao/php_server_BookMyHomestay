@@ -1,8 +1,8 @@
 <?php
-require_once 'database/queryBuilders/Select.php';
-require_once 'database/queryBuilders/Insert.php';
-require_once 'database/queryBuilders/Update.php';
-require_once 'database/queryBuilders/Delete.php';
+require_once ROOT . 'database/queryBuilders/Select.php';
+require_once ROOT . 'database/queryBuilders/Insert.php';
+require_once ROOT . 'database/queryBuilders/Update.php';
+require_once ROOT . 'database/queryBuilders/Delete.php';
 
 define('QUERY_BUILDER_SEE_DEBUG', true);
 

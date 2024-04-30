@@ -1,9 +1,9 @@
 <?php
 
-require_once 'utils/stdout-log.php';
-require_once 'utils/send-response.php';
-require_once 'database/QueryBuilder.php';
-require_once 'database/constants.php';
+require_once ROOT . 'utils/stdout-log.php';
+require_once ROOT . 'utils/send-response.php';
+require_once ROOT . 'database/QueryBuilder.php';
+require_once ROOT . 'database/constants.php';
 
 class Database
 {

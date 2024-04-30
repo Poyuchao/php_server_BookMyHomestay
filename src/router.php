@@ -1,7 +1,7 @@
 <?php
-require_once 'routes/users/routes.php';
-require_once 'utils/send-response.php';
-require_once 'database/index.php';
+require_once ROOT . 'routes/users/routes.php';
+require_once ROOT . 'utils/send-response.php';
+require_once ROOT . 'database/index.php';
 
 $ROUTES = [
   'GET' => [
