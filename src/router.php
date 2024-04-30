@@ -11,9 +11,9 @@ $ROUTES = [
     $GET_USER,  //The $GET_USER variable is an instance of the Route class that defines the route for getting a specific user.
   ],
   'POST' => [
-    $loginRoute, //The $loginRoute variable is an instance of the Route class that defines the route for user login.
-
-  ]
+    $POST_USERS,
+    $PATCH_USER,
+  ],
 ];
 
 //handle HTTP requests in a PHP application.

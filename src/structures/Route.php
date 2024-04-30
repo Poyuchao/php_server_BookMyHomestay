@@ -102,4 +102,9 @@ class Route
   {
     return $this->method . ' ' . $this->path;
   }
+
+  public static function path($path)
+  {
+    return (new RouteBuilder())->setPath($path);
+  }
 }

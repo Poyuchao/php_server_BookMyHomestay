@@ -36,7 +36,7 @@ class InsertQueryBuilder
   /**
    * Set the data to insert.
    */
-  function data(array $data): InsertQueryBuilder
+  function values(array $data): InsertQueryBuilder
   {
     // Sanitize the column names and values and store them in the columns and values arrays.
     foreach ($data as $column => $value) {
@@ -60,6 +60,8 @@ class InsertQueryBuilder
     // Create the query string, e.g. INSERT INTO table (column1, column2, column3) VALUES (?, ?, ?).
     $query = "INSERT INTO $this->table ($columns) VALUES ($values)";
 
+    if (QUERY_BUILDER_SEE_DEBUG) print_r($query . "\n");
+
     // Prepare the query
     $statement = $this->queryBuilder->connection->prepare($query);
 
@@ -76,6 +78,12 @@ class InsertQueryBuilder
 
     // Bind the values to the statement to prevent SQL injection.
     $statement->bind_param($types, ...$this->values);
+
+    if (QUERY_BUILDER_SEE_DEBUG) {
+      print_r($this->values);
+      echo "\n";
+    }
+
     return $statement;
   }
 

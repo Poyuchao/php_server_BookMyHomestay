@@ -4,37 +4,36 @@ require_once 'database/QueryBuilder.php';
 require_once 'utils/send-response.php';
 require_once 'structures/index.php';
 
-$GET_USERS = (new RouteBuilder())
+$GET_USERS = Route::path('/users')
   ->setMethod('GET')
-  ->setPath('/users')
-  ->setHandler(function ($_, $database) {
-    $take = $_GET['take'] ?? 1000;
-    $skip = $_GET['skip'] ?? 0;
-
-    $users = (new QueryBuilder($database->connection))
+  ->setHandler(function ($_, Database $database) {
+    $queryBuilder = QueryBuilder::create($database->connection)
       ->select()
-      ->from('users')
-      ->limit($take)
-      ->offset($skip)
-      ->execute();
-    send_response($users);
+      ->from('users');
+
+    if (isset($_GET['search'])) {
+      $queryBuilder->where('fname', 'LIKE', '%' . $_GET['search'] . '%');
+    }
+
+    send_response($queryBuilder->execute());
   })
   ->build(); // This is the route object
 
-$GET_USER = (new RouteBuilder())
-  ->setMethod('GET') 
-  ->setPath('/users/:id')
-  ->setHandler(function ($params, $database) {
-    $user = (new QueryBuilder($database->connection))
+// Path parameters
+$GET_USER = Route::path('/users/:id')
+  ->setMethod('GET')
+  ->setHandler(function (array $params, Database $database) {
+    $user = QueryBuilder::create($database->connection)
       ->select()
       ->from('users')
       ->where('id', '=', $params['id'])
+      ->first()
       ->execute();
 
-    if (count($user) === 0) {
+    if (!$user) {
       send_error_response('User not found', 404);
     }
 
-    send_response($user[0]);
+    send_response($user);
   })
   ->build();

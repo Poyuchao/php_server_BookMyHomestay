@@ -7,3 +7,5 @@ define('QUERY_BUILDER_JOIN_INNER', 'INNER JOIN');
 define('QUERY_BUILDER_JOIN_LEFT', 'LEFT JOIN');
 define('QUERY_BUILDER_JOIN_RIGHT', 'RIGHT JOIN');
 define('QUERY_BUILDER_JOIN_FULL', 'FULL JOIN');
+
+const ALLOWED_OPERATORS = ['=', '!=', '>', '<', '>=', '<=', 'ILIKE', 'LIKE', 'NOT LIKE', 'IN', 'NOT IN'];
