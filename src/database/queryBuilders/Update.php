@@ -1,5 +1,5 @@
 <?php
-require_once 'database/constants.php';
+require_once ROOT . 'database/constants.php';
 
 class UpdateQueryBuilder
 {

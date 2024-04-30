@@ -1,4 +1,4 @@
 <?php
 
-require_once 'structures/Route.php';
-require_once 'structures/RouteBuilder.php';
+require_once ROOT . 'structures/Route.php';
+require_once ROOT . 'structures/RouteBuilder.php';

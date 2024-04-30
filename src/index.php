@@ -1,6 +1,7 @@
 <?php
-require_once 'utils/stdout-log.php';
-require_once 'router.php';
+define('ROOT', getcwd() . "/");
+require_once ROOT . 'utils/stdout-log.php';
+require_once ROOT . 'router.php';
 
 stdoutLog('Hello, world!');
 
