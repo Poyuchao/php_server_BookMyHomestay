@@ -23,6 +23,17 @@ $PATCH_USER = Route::path('/users/update/:id')
         send_error_response('Invalid email', 400);
       }
 
+      $userWithEmail = QueryBuilder::create($database->connection)
+        ->select()
+        ->from('users')
+        ->where('email', '=', $_POST['email'])
+        ->first()
+        ->execute();
+
+      if ($userWithEmail) {
+        send_error_response('Email already in use', 400);
+      }
+
       $data['email'] = $_POST['email'];
     }
 
