@@ -36,7 +36,7 @@ class InsertQueryBuilder
   /**
    * Set the data to insert.
    */
-  function data(array $data): InsertQueryBuilder
+  function values(array $data): InsertQueryBuilder
   {
     // Sanitize the column names and values and store them in the columns and values arrays.
     foreach ($data as $column => $value) {

@@ -24,6 +24,12 @@ class UpdateQueryBuilder
    */
   private array $wheres = [];
 
+  /**
+   * Explicitly allow dangerous queries and update without where.
+   * This is a security risk and should be used with caution.
+   */
+  private bool $allowDangerousQueries = false;
+
   public function __construct(QueryBuilder $queryBuilder)
   {
     $this->queryBuilder = $queryBuilder;
@@ -68,6 +74,12 @@ class UpdateQueryBuilder
     return $this;
   }
 
+  public function allowDangerousQueries(): UpdateQueryBuilder
+  {
+    $this->allowDangerousQueries = true;
+    return $this;
+  }
+
   /**
    * Build the query.
    */
@@ -78,6 +90,10 @@ class UpdateQueryBuilder
 
     // Create the query string, e.g. UPDATE table SET column1 = ?, column2 = ?, column3 = ?.
     $query = "UPDATE $this->table SET $set";
+
+    if (!$this->allowDangerousQueries && empty($this->wheres)) {
+      throw new Exception('Dangerous query, update without where. Use allowDangerousQueries() to allow dangerous queries.');
+    }
 
     // Add the where clauses to the query.
     if (count($this->wheres) > 0) {

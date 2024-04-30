@@ -1,8 +1,8 @@
 <?php
-require_once 'database/index.php';
 require_once 'database/queryBuilders/Select.php';
 require_once 'database/queryBuilders/Insert.php';
 require_once 'database/queryBuilders/Update.php';
+require_once 'database/queryBuilders/Delete.php';
 
 define('QUERY_BUILDER_SEE_DEBUG', true);
 
@@ -15,7 +15,7 @@ class QueryBuilder
   /**
    * The instance of the SelectQueryBuilder or InsertQueryBuilder class.
    */
-  private SelectQueryBuilder|InsertQueryBuilder|UpdateQueryBuilder $queryBuilder;
+  private SelectQueryBuilder|InsertQueryBuilder|UpdateQueryBuilder|DeleteQueryBuilder $queryBuilder;
 
   function __construct(mysqli $connection)
   {
@@ -51,6 +51,15 @@ class QueryBuilder
   function update(): UpdateQueryBuilder
   {
     $this->queryBuilder = new UpdateQueryBuilder($this);
+    return $this->queryBuilder;
+  }
+
+  /**
+   * Delete data from the table.
+   */
+  function delete(): DeleteQueryBuilder
+  {
+    $this->queryBuilder = new DeleteQueryBuilder($this);
     return $this->queryBuilder;
   }
 

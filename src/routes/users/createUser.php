@@ -32,7 +32,7 @@ $POST_USERS = Route::path('/users')
     QueryBuilder::create($database->connection)
       ->insert()
       ->into('users')
-      ->data([
+      ->values([
         'email' => $_POST['email'],
         'fname' => $_POST['fname'],
         'pass' => password_hash($_POST['pass'], PASSWORD_BCRYPT),
