@@ -1,7 +1,7 @@
 <?php
 
-require_once 'utils/stdout-log.php';
-require_once 'utils/send-response.php';
+require_once ROOT . 'utils/stdout-log.php';
+require_once ROOT . 'utils/send-response.php';
 
 
 //
