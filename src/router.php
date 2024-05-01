@@ -20,6 +20,7 @@ function executeRequest()
 
   $method = $_SERVER['REQUEST_METHOD'];
   $path = $_SERVER['REQUEST_URI'];
+  $path = explode('index.php', $path)[1];
 
   if (!isset($ROUTES[$method])) {
     send_error_response('Method not allowed', 405);
