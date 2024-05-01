@@ -23,6 +23,7 @@ function executeRequest()
 
   $method = $_SERVER['REQUEST_METHOD']; // GET, POST, PUT, DELETE
   $path = $_SERVER['REQUEST_URI'];
+  $path = explode('index.php', $path)[1];
 
   //checks if a specific HTTP method (represented by $method) is defined in the $ROUTES array. 
   //If the method is not defined, it sends an error response with a 405 status code (Method Not Allowed) and a message 'Method not allowed',
