@@ -1,7 +1,10 @@
 <?php
+
 require_once ROOT . 'routes/users/routes.php';
 require_once ROOT . 'utils/send-response.php';
 require_once ROOT . 'database/index.php';
+require_once ROOT . 'routes/login/login.php'; 
+require_once ROOT . 'routes/register/register.php';
 
 $ROUTES = [   
   'GET' => [
@@ -10,23 +13,38 @@ $ROUTES = [
     $GET_USER,  //The $GET_USER variable is an instance of the Route class that defines the route for getting a specific user.
   ],
   'POST' => [
-    $POST_USERS,
-    $PATCH_USER,
+    $Register_user,
+    $PATCH_USER
+   
   ],
 ];
 
 //handle HTTP requests in a PHP application.
 function executeRequest()
 {
+ 
+   // Set CORS headers
+   header("Access-Control-Allow-Origin: *");
+   header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
+   header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
+ 
+   // Handle preflight CORS requests
+   if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+       // Return status 200 OK
+       header("HTTP/1.1 200 OK");
+       return;
+   }
+   
   global $ROUTES; 
   
   $method = $_SERVER['REQUEST_METHOD']; // GET, POST, PUT, DELETE
   $path = $_SERVER['REQUEST_URI'];       
 
-  //checks if a specific HTTP method (represented by $method) is defined in the $ROUTES array. 
-  //If the method is not defined, it sends an error response with a 405 status code (Method Not Allowed) and a message 'Method not allowed',
-  //then it stops further execution of the function.
-  if (!isset($ROUTES[$method])) { 
+  $method = $_SERVER['REQUEST_METHOD'];
+  $path = $_SERVER['REQUEST_URI'];
+  $path = explode('index.php', $path)[1];
+
+  if (!isset($ROUTES[$method])) {
     send_error_response('Method not allowed', 405);
     return;
   }
