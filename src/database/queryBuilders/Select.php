@@ -64,7 +64,7 @@ class SelectQueryBuilder
    *
    * Perform a join on the table.
    */
-  function join($table, $column1, $column2, $type = 'JOIN'): SelectQueryBuilder
+  function join($table, $column1, $column2, $type = QUERY_BUILDER_JOIN_INNER): SelectQueryBuilder
   {
     // sanitize the table and column names and store them in the joins array.
     $sanitizedTable = $this->queryBuilder->sanitizeName($table);
