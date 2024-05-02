@@ -12,11 +12,11 @@ $Register_user = Route::path('/reg')
         $json = file_get_contents("php://input");
 
         // Decode the JSON string into an associative array
-        $data = json_decode($json, true);
-        print_r("here is register data ".$data['fname']);
+        $regData = json_decode($json, true);
+        print_r("here is register data ".$regData['fname']);
 
         // check if the json data is valid
-        if (!$data) {
+        if (!$regData) {
             send_error_response('Invalid JSON', 400);
             return;
         }
@@ -25,18 +25,18 @@ $Register_user = Route::path('/reg')
          $requiredKeys = ['fname', 'lname', 'email', 'pass', 'gender', 'vegetarian', 'budget', 'location'];
         
          // Verify required keys
-         if (!verifyRequiredKeys($data, $requiredKeys)) {
+         if (!verifyRequiredKeys($regData, $requiredKeys)) {
              return; // The response is handled within the verifyRequiredKeys function
          }
 
         // Validate email
-        if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+        if (!filter_var($regData['email'], FILTER_VALIDATE_EMAIL)) {
             send_error_response('Invalid email', 400);
             return;
         }
         
         // Validate password length
-        if (strlen($data['pass']) < 8) {
+        if (strlen($regData['pass']) < 8) {
             send_error_response('Password too small', 400);
             return;
         }
@@ -45,7 +45,7 @@ $Register_user = Route::path('/reg')
         $userWithSameEmail = QueryBuilder::create($database->connection)
             ->select()
             ->from('users')
-            ->where('email', '=', $data['email'])
+            ->where('email', '=', $regData['email'])
             ->first()
             ->execute();
         
@@ -59,14 +59,14 @@ $Register_user = Route::path('/reg')
             ->insert()
             ->into('users')
             ->values([
-                'email' => $data['email'],
-                'fname' => $data['fname'],
-                'lname' => $data['lname'],
-                'pass' => password_hash($data['pass'], PASSWORD_BCRYPT, ['cost' => 12]),
-                'gender' => $data['gender'],
-                'vegetarian' => $data['vegetarian'],
-                'budget' => $data['budget'],
-                'location' => $data['location'],
+                'email' => $regData['email'],
+                'fname' => $regData['fname'],
+                'lname' => $regData['lname'],
+                'pass' => password_hash($regData['pass'], PASSWORD_BCRYPT, ['cost' => 12]),
+                'gender' => $regData['gender'],
+                'vegetarian' => $regData['vegetarian'],
+                'budget' => $regData['budget'],
+                'location' => $regData['location'],
             ])
             ->execute();
 
