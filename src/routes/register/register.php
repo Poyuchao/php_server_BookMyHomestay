@@ -13,7 +13,7 @@ $Register_user = Route::path('/reg')
 
         // Decode the JSON string into an associative array
         $regData = json_decode($json, true);
-        print_r("here is register data ".$regData['fname']);
+    
 
         // check if the json data is valid
         if (!$regData) {
