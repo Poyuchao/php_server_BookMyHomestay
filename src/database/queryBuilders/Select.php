@@ -60,7 +60,7 @@ class SelectQueryBuilder
   }
 
   /**
-   * This function should not recieve user input directly, as it is vulnerable to SQL injection.
+   * This function should not receive user input directly, as it is vulnerable to SQL injection.
    *
    * Perform a join on the table.
    */
@@ -81,6 +81,36 @@ class SelectQueryBuilder
   }
 
   /**
+   * This function should not receive user input directly, as it is vulnerable to SQL injection.
+   *
+   * Perform a join on the table.
+   */
+  function innerJoin($table, $column1, $column2): SelectQueryBuilder
+  {
+    return $this->join($table, $column1, $column2, QUERY_BUILDER_JOIN_INNER);
+  }
+
+  /**
+   * This function should not receive user input directly, as it is vulnerable to SQL injection.
+   *
+   * Perform a join on the table.
+   */
+  function leftJoin($table, $column1, $column2): SelectQueryBuilder
+  {
+    return $this->join($table, $column1, $column2, QUERY_BUILDER_JOIN_LEFT);
+  }
+
+  /**
+   * This function should not receive user input directly, as it is vulnerable to SQL injection.
+   *
+   * Perform a join on the table.
+   */
+  function rightJoin($table, $column1, $column2): SelectQueryBuilder
+  {
+    return $this->join($table, $column1, $column2, QUERY_BUILDER_JOIN_RIGHT);
+  }
+
+  /**
    * Add a where clause to the query.
    * Allowed operators: =, !=, >, <, >=, <=, ILIKE, LIKE, NOT LIKE, IN, NOT IN
    */
@@ -95,7 +125,29 @@ class SelectQueryBuilder
     $this->wheres[] = [
       'column' => $sanitizedColumn,
       'operator' => $operator,
-      'value' => $value
+      'value' => $value,
+      'type' => 'AND'
+    ];
+    return $this;
+  }
+
+  /**
+   * Add an OR where clause to the query.
+   * Allowed operators: =, !=, >, <, >=, <=, ILIKE, LIKE, NOT LIKE, IN, NOT IN
+   */
+  function orWhere($column, $operator, $value): SelectQueryBuilder
+  {
+    // Verify that the operator is allowed.
+    $this->_verifyOperator($operator);
+    // Sanitize the column name and store the where clause in the wheres array.
+    $sanitizedColumn = $this->queryBuilder->sanitizeName($column);
+
+    // Add the where clause to the wheres array.
+    $this->wheres[] = [
+      'column' => $sanitizedColumn,
+      'operator' => $operator,
+      'value' => $value,
+      'type' => 'OR'
     ];
     return $this;
   }
@@ -163,7 +215,7 @@ class SelectQueryBuilder
     // Add the joins to the query if there are any.
     foreach ($this->joins as $join) {
       // Add the join to the query, e.g. INNER JOIN table ON column1 = column2.
-      $query .= " {$join['type']} `{$join['table']}` ON `{$join['column1']}` = `{$join['column2']}`";
+      $query .= " {$join['type']} {$join['table']} ON {$join['column1']} = {$join['column2']}";
     }
 
     // Add the where clauses to the query if there are any.
@@ -171,12 +223,20 @@ class SelectQueryBuilder
       $query .= ' WHERE ';
       $wheres = [];
       // Add the where clauses to the query, e.g. column1 = ? AND column2 > ?.
-      foreach ($this->wheres as $where) {
-        $wheres[] = "`{$where['column']}` {$where['operator']} ?";
+      for ($index = 0; $index < count($this->wheres); $index++) {
+        $where = $this->wheres[$index];
+        $whereClause = '';
+
+        if ($index !== 0) {
+          $whereClause .= " {$where['type']} ";
+        }
+
+        $whereClause .= "{$where['column']} {$where['operator']} ?";
+
+        $wheres[] = $whereClause;
       }
 
-      // Add the where clauses to the query, e.g. select * from table where column1 = ? AND column2 > ?.
-      $query .= implode(' AND ', $wheres);
+      $query .= implode(' ', $wheres);
     }
 
     // Add the order by clauses to the query if there are any.
@@ -185,7 +245,7 @@ class SelectQueryBuilder
       $orders = [];
       // Add the order by clauses to the query, e.g. column1 ASC, column2 DESC.
       foreach ($this->orders as $order) {
-        $orders[] = "`{$order['column']}` {$order['direction']}";
+        $orders[] = "{$order['column']} {$order['direction']}";
       }
 
       // Add the order by clauses to the query,

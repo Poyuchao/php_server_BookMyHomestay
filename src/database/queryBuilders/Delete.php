@@ -87,7 +87,7 @@ class DeleteQueryBuilder
       $wheres = [];
       // Add the where clauses to the query, e.g. column1 = ? AND column2 > ?.
       foreach ($this->wheres as $where) {
-        $wheres[] = "`{$where['column']}` {$where['operator']} ?";
+        $wheres[] = "{$where['column']} {$where['operator']} ?";
       }
 
       // Add the where clauses to the query, e.g. delete from table where column1 = ? AND column2 > ?.
