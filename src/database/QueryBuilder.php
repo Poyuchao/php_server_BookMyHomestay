@@ -1,8 +1,9 @@
 <?php
-require_once ROOT . 'database/queryBuilders/Select.php';
-require_once ROOT . 'database/queryBuilders/Insert.php';
-require_once ROOT . 'database/queryBuilders/Update.php';
-require_once ROOT . 'database/queryBuilders/Delete.php';
+require_once ROOT . ROOT . 'database/queryBuilders/Select.php';
+require_once ROOT . ROOT . 'database/queryBuilders/Insert.php';
+require_once ROOT . ROOT . 'database/queryBuilders/Update.php';
+require_once ROOT . ROOT . 'database/queryBuilders/Delete.php';
+require_once ROOT . 'database/queryBuilders/Raw.php';
 
 define('QUERY_BUILDER_SEE_DEBUG', true);
 
@@ -15,7 +16,12 @@ class QueryBuilder
   /**
    * The instance of the SelectQueryBuilder or InsertQueryBuilder class.
    */
-  private SelectQueryBuilder|InsertQueryBuilder|UpdateQueryBuilder|DeleteQueryBuilder $queryBuilder;
+  private SelectQueryBuilder|InsertQueryBuilder|UpdateQueryBuilder|DeleteQueryBuilder|RawQueryBuilder $queryBuilder;
+
+  /**
+   * Raw query string.
+   */
+  public string $_rawQuery;
 
   function __construct(mysqli $connection)
   {
@@ -24,7 +30,7 @@ class QueryBuilder
 
   /**
    * Select columns from the table.
-   * This function should not recieve user input directly, as it is vulnerable to SQL injection.
+   * This function should not receive user input directly, as it is vulnerable to SQL injection.
    */
   function select(?array $columns = ['*']): SelectQueryBuilder
   {
@@ -64,11 +70,30 @@ class QueryBuilder
   }
 
   /**
+   * Set the raw query string.
+   * This function should not receive user input directly, as it is vulnerable to SQL injection.
+   */
+  function raw(string $query): RawQueryBuilder
+  {
+    $this->queryBuilder = new RawQueryBuilder($this, $query);
+    return $this->queryBuilder;
+  }
+
+  /**
    * Sanitize the name of a column or table.
    */
   function sanitizeName(string $name): string
   {
-    return $this->connection->real_escape_string($name);
+    if ($name === '*') {
+      return $name;
+    }
+
+    $explodedColumnNames = explode('.', $name);
+    $sanitizedColumnNames = array_map(fn ($column) => "`" . $this->connection->real_escape_string($column) . "`", $explodedColumnNames);
+
+    print_r($sanitizedColumnNames);
+
+    return implode('.', $sanitizedColumnNames);
   }
 
   /**
@@ -93,12 +118,17 @@ class QueryBuilder
 
   function execute()
   {
-    if (!isset($this->queryBuilder)) {
-      throw new Exception('No query type specified');
+    if (!isset($this->queryBuilder) && !isset($this->_rawQuery)) {
+      throw new Exception('No query builder set.');
+    }
+
+    if (isset($this->_rawQuery)) {
+      return $this->connection->query($this->_rawQuery);
     }
 
     return $this->queryBuilder->execute();
   }
+
 
   /**
    * Create a new instance of the QueryBuilder class.

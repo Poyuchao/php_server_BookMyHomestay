@@ -3,6 +3,8 @@
 require_once ROOT . 'utils/stdout-log.php';
 require_once ROOT . 'utils/send-response.php';
 
+
+//
 class Route
 {
   public ?string $method = NULL;
@@ -12,6 +14,10 @@ class Route
   public bool $isAdmin = FALSE;
   public $handler;
 
+
+  //The constructor initializes the handler with a default function that sends a "405 Method Not Implemented" 
+  //error if no specific handler is assigned later. 
+  //This ensures that there's always a fallback handler to execute if routing configuration is incomplete.
   public function __construct()
   {
     $this->handler = function () {
@@ -19,11 +25,15 @@ class Route
     };
   }
 
+
+
   public function isMatch($method, $path)
   {
+    //Initializes an empty array $parameters to store parameters extracted from the path.
     $parameters = [];
 
-    // Check if method matches
+    // checks if the request's method matches the route's method. If not, 
+    //it logs the mismatch and returns false for the match, along with an empty parameters array.
     if ($this->method !== $method) {
       debugLog('[' . $this->__toString() . "] Method does not match: $this->method !== $method");
       return [
@@ -34,10 +44,14 @@ class Route
 
     // Split path into parts by '/'
     $pathParts = explode('/', $path);
+
+    //checks if the request's method matches the route's method. 
+    //If not, it logs the mismatch and returns false for the match, along with an empty parameters array.
     $pathParts = array_filter($pathParts, function ($value) {
       return $value !== '' && $value !== 'index.php';
     });
-    // Re-index array, because php stupidly doesn't do this by default
+    // Re-index array, because php stupidly doesn't do this by default,
+    // Re-indexes the array to ensure keys are sequential after filtering.
     $pathParts = array_values($pathParts);
 
     $lastItem = end($pathParts);

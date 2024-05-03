@@ -28,7 +28,7 @@ $POST_USERS = Route::path('/users')
       send_error_response('User with same email already exists', 400);
     }
 
-    QueryBuilder::create($database->connection)
+    $user = QueryBuilder::create($database->connection)
       ->insert()
       ->into('users')
       ->values([
@@ -41,10 +41,12 @@ $POST_USERS = Route::path('/users')
         'budget' => $_POST['budget'],
         'location' => $_POST['location'],
       ])
+      ->returning(['*'])
       ->execute();
 
     send_response([
       'success' => "User created",
+      'user' => $user
     ], 201);
   })
   ->build();

@@ -1,5 +1,6 @@
 <?php
 
+
 function stdoutLog($msg)
 {
   $handler = fopen('php://stdout', 'w');
