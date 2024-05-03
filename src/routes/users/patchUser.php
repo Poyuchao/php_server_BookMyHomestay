@@ -76,15 +76,17 @@ $PATCH_USER = Route::path('/users/update/:id')
       send_error_response('User not found', 404);
     }
 
-    QueryBuilder::create($database->connection)
+    $user = QueryBuilder::create($database->connection)
       ->update()
       ->table('users')
       ->set($data)
       ->where('id', '=', $params['id'])
+      ->returning(['*'])
       ->execute();
 
     return send_response([
       'success' => 'User updated',
+      'user' => $user[0]
     ]);
   })
   ->build();

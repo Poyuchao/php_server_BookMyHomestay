@@ -19,6 +19,11 @@ class InsertQueryBuilder
    */
   private array $values = [];
 
+  /**
+   * Columns to return.
+   */
+  private array $returning = [];
+
   function __construct(QueryBuilder $queryBuilder)
   {
     $this->queryBuilder = $queryBuilder;
@@ -44,6 +49,15 @@ class InsertQueryBuilder
       $this->values[] = $value;
     }
 
+    return $this;
+  }
+
+  /**
+   * Set the columns to return.
+   */
+  function returning(array $columns): InsertQueryBuilder
+  {
+    $this->returning = array_map(fn ($column) => $this->queryBuilder->sanitizeName($column), $columns);
     return $this;
   }
 
@@ -87,11 +101,32 @@ class InsertQueryBuilder
     return $statement;
   }
 
+  function getReturnRow()
+  {
+    if (empty($this->returning)) {
+      return null;
+    }
+
+    $columns = implode(', ', $this->returning);
+
+    $query = "SELECT $columns FROM $this->table WHERE id = LAST_INSERT_ID()";
+
+    if (QUERY_BUILDER_SEE_DEBUG) print_r($query . "\n");
+
+    $result = $this->queryBuilder->connection->query($query);
+
+    $results = $result->fetch_all(MYSQLI_ASSOC);
+
+    return count($results) > 0 ? $results[0] : null;
+  }
+
   function execute()
   {
     // Execute the query and close the statement.
     $statement = $this->buildQuery();
     $statement->execute();
     $statement->close();
+
+    return $this->getReturnRow();
   }
 }
