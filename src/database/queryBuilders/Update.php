@@ -23,6 +23,10 @@ class UpdateQueryBuilder
    * The where clauses.
    */
   private array $wheres = [];
+  /**
+   * Returning columns.
+   */
+  private array $returning = [];
 
   /**
    * Explicitly allow dangerous queries and update without where.
@@ -71,6 +75,15 @@ class UpdateQueryBuilder
       'operator' => $operator
     ];
 
+    return $this;
+  }
+
+  /**
+   * Set the columns to return.
+   */
+  public function returning(array $columns): UpdateQueryBuilder
+  {
+    $this->returning = array_map(fn ($column) => $this->queryBuilder->sanitizeName($column), $columns);
     return $this;
   }
 
@@ -134,6 +147,40 @@ class UpdateQueryBuilder
     return $stmt;
   }
 
+  public function getReturnRows()
+  {
+    if (empty($this->returning)) {
+      return NULL;
+    }
+
+    $columns = implode(', ', $this->returning);
+    $query = "SELECT $columns FROM $this->table WHERE ";
+    $wheres = [];
+    foreach ($this->wheres as $where) {
+      $wheres[] = "$where[column] $where[operator] ?";
+    }
+    $query .= implode(' AND ', $wheres);
+
+    if (QUERY_BUILDER_SEE_DEBUG) print_r($query . "\n");
+
+    $stmt = $this->queryBuilder->connection->prepare($query);
+    if (!$stmt) {
+      throw new Exception($this->queryBuilder->connection->error);
+    }
+
+    $types = '';
+    $values = [];
+    foreach ($this->wheres as $where) {
+      $types .= $this->queryBuilder->getBindValueType($where['value']);
+      $values[] = $where['value'];
+    }
+
+    $stmt->bind_param($types, ...$values);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    return $result->fetch_all(MYSQLI_ASSOC);
+  }
+
   /**
    * Execute the query.
    */
@@ -141,7 +188,7 @@ class UpdateQueryBuilder
   {
     $stmt = $this->buildQuery();
     $stmt->execute();
-    return $stmt;
+    return $this->getReturnRows() ?? $stmt->affected_rows;
   }
 
   /**
