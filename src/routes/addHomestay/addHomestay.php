@@ -69,7 +69,7 @@ $addHomestay = Route::path('/addHome')
                     'title'=>$homeData['title'], 
                     'desc'=>$homeData['desc'], 
                     'location'=>$homeData['location'],
-                    'rating'=> TMP_RATING, // define in config.php
+                    'rating'=> TMP_RATING, //  define in config.php
                     'price_per_month'=> $homeData['price_per_month'],
                     'vegetarian_friendly'=>$homeData['vegetarian_friendly'] == "yes" ? 1 : 0,
                 
