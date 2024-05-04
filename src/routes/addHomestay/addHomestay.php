@@ -30,8 +30,12 @@ $addHomestay = Route::path('/addHome')
         $logged_in_user_id = 1; //tempory user id is set to 1 because the login is not implemented
 
         // $json = file_get_contents("php://input"); // Get JSON as a string from php://input
-        $amenities = explode(',', $_POST['amenities']); 
-        $homeData = $_POST;
+
+
+        $amenities = explode(',', $_POST['amenities']); // Split the string into an array
+        $homeData = $_POST; // get the homestay data from the form
+
+        // check file is uploaded
         if (isset($_FILES['imageFile'])) {
             $file = $_FILES['imageFile'];
             echo "Received file with name: " . $file['name'];
@@ -44,8 +48,7 @@ $addHomestay = Route::path('/addHome')
 
       
         
-        // Upload the file
-      
+        // Upload the file   
         $fileUpload = new FileUpload($_FILES['imageFile'], ROOT.HOMESTAY_IMG_FOLDER, MAX_FILE_SIZE);
         $img_addr = $fileUpload->commitUpload();
         // print_r("all good");
@@ -55,8 +58,6 @@ $addHomestay = Route::path('/addHome')
        
         
         print_r("all good");
-
-        $homeTmpRating = 3; //tempory rating is set to 3 because the review system is not implemented
 
   
         // insert the rest of the homestay data into the homestay table  
@@ -68,7 +69,7 @@ $addHomestay = Route::path('/addHome')
                     'title'=>$homeData['title'], 
                     'desc'=>$homeData['desc'], 
                     'location'=>$homeData['location'],
-                    'rating'=> $homeTmpRating,
+                    'rating'=> TMP_RATING, // define in config.php
                     'price_per_month'=> $homeData['price_per_month'],
                     'vegetarian_friendly'=>$homeData['vegetarian_friendly'] == "yes" ? 1 : 0,
                 

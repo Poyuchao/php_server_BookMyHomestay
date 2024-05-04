@@ -5,7 +5,7 @@ require_once ROOT . 'utils/send-response.php';
 require_once ROOT . 'database/index.php';
 require_once ROOT . 'routes/login/login.php'; 
 require_once ROOT . 'routes/register/register.php';
-require_once ROOT . 'routes/updateHome/homeUpdate.php';
+require_once ROOT . 'routes/addHomestay/addHomestay.php';
 
 
 
