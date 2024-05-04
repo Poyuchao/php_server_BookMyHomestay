@@ -1,8 +1,8 @@
 <?php
-require_once ROOT . ROOT . 'database/queryBuilders/Select.php';
-require_once ROOT . ROOT . 'database/queryBuilders/Insert.php';
-require_once ROOT . ROOT . 'database/queryBuilders/Update.php';
-require_once ROOT . ROOT . 'database/queryBuilders/Delete.php';
+require_once ROOT . 'database/queryBuilders/Select.php';
+require_once ROOT . 'database/queryBuilders/Insert.php';
+require_once ROOT . 'database/queryBuilders/Update.php';
+require_once ROOT . 'database/queryBuilders/Delete.php';
 require_once ROOT . 'database/queryBuilders/Raw.php';
 
 define('QUERY_BUILDER_SEE_DEBUG', true);

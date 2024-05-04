@@ -26,6 +26,7 @@ $Register_user = Route::path('/reg')
         
          // Verify required keys
          if (!verifyRequiredKeys($regData, $requiredKeys)) {
+            send_error_response('missing arguement', 400);
              return; // The response is handled within the verifyRequiredKeys function
          }
 
@@ -64,7 +65,7 @@ $Register_user = Route::path('/reg')
                 'lname' => $regData['lname'],
                 'pass' => password_hash($regData['pass'], PASSWORD_BCRYPT, ['cost' => 12]),
                 'gender' => $regData['gender'],
-                'vegetarian' => $regData['vegetarian'],
+                'vegetarian' => $regData['vegetarian']=="yes"?1:0,
                 'budget' => $regData['budget'],
                 'location' => $regData['location'],
             ])

@@ -54,3 +54,60 @@ class File{
             $this->writeFile($fileName,json_encode($prevData),true);
         }
     }
+
+
+
+    class fileUpload {
+        private $srcFile;
+        private $destAddr;
+        private $sizeCap;
+
+        function __construct($srcFile,$destAddr,$sizeCap)
+        {
+            $this->srcFile = $srcFile;
+            $this->destAddr = $destAddr."/".$this->srcFile['name']; // get the file name
+            $this->sizeCap = $sizeCap;
+        }
+
+        private function fileSize(){
+            if($this->srcFile['size'] > $this->sizeCap){
+                throw new Exception("File size too large".$this->sizeCap,413);
+            }
+        }
+
+        private function ext_Chk(){
+            $contType= substr($this->srcFile['type'],0,stripos($this->srcFile['type'],"/"));
+            switch($contType){
+                case "image":
+                    $extArray = ["jpeg","jpg","png","bmp","webp"];
+                break;
+                case "application":
+                    $extArray = ["json"];
+                break;
+                default:
+                    throw new Exception("Invalid file type",403);
+            }
+            $finfo = new finfo(FILEINFO_MIME_TYPE); // get the file type
+            $realExt=basename($finfo->file($this->srcFile['tmp_name'])); // get the file extension
+
+            if(!(false==array_search($realExt,$extArray))){ // check if the file type is in the array
+                return true;
+            }
+            throw new Exception("Invalid file type",403);
+        }
+
+        function commitUpload(){
+      
+            $this->fileSize();
+            $this->ext_Chk();
+            if(!move_uploaded_file($this->srcFile['tmp_name'],$this->destAddr)){
+                throw new Exception("File upload failed",500);
+            }
+            
+            //how to use substr -> substr("Hello",1,3) -> "ell"
+            $destAddr = $_SERVER["REQUEST_SCHEME"]."://".$_SERVER["SERVER_ADDR"].substr($_SERVER["SCRIPT_NAME"],0,stripos($_SERVER["SCRIPT_NAME"],"classSolution.php")).substr($this->destAddr,3); 
+            
+            return  $destAddr ;
+        }
+
+    }

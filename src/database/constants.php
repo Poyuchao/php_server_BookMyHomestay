@@ -12,6 +12,7 @@ define("DB_SERVER_NAME","localhost");
 define("DB_USER_NAME", "phpAgentTeamA");
 define("DB_PASSWORD", "test12345");
 define("DB_NAME", "bookmyhomestay");
+
 define('QUERY_BUILDER_AND_WHERE', 'AND');
 define('QUERY_BUILDER_OR_WHERE', 'OR');
 
