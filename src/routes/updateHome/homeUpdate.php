@@ -20,7 +20,7 @@ $addHomestay = Route::path('/addHome')
         //     $logged_in_username = $_SESSION['username'];
         // } else {
         //     send_error_response("User not logged in", 401);
-        //     return;
+        //     return ;
         // }
 
         // Construct the path relative to this script's location
