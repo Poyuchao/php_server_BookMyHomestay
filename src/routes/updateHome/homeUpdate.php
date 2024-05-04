@@ -5,6 +5,8 @@ require_once ROOT . 'database/QueryBuilder.php';
 require_once ROOT . 'utils/send-response.php';
 require_once ROOT . 'utils/check-keys.php';
 require_once ROOT . 'structures/index.php';
+require_once ROOT . 'structures/fileHandle.php';
+require_once ROOT . 'utils/config.php';
 
 $addHomestay = Route::path('/addHome')
     ->setMethod('POST')
@@ -21,24 +23,37 @@ $addHomestay = Route::path('/addHome')
         //     return;
         // }
 
+        // Construct the path relative to this script's location
+
+
+
         $logged_in_user_id = 1; //tempory user id is set to 1 because the login is not implemented
 
-        $json = file_get_contents("php://input"); // Get JSON as a string from php://input
-
-        $homeData = json_decode($json, true);
-
-        if(!$homeData){
-            send_error_response('Invalid JSON', 400);
-            return;
+        // $json = file_get_contents("php://input"); // Get JSON as a string from php://input
+        $amenities = explode(',', $_POST['amenities']); 
+        $homeData = $_POST;
+        if (isset($_FILES['imageFile'])) {
+            $file = $_FILES['imageFile'];
+            echo "Received file with name: " . $file['name'];
+            echo "<pre>";  
+                print_r($file);
+            echo "</pre>";
+        } else {
+            echo "No file uploaded.";
         }
+
+      
         
-        print_r("amenities".$homeData['title']);
-        $requiredKeys = ['title','desc', 'location', 'price_per_month', 'amenities', 'vegetarian_friendly','image_path'];
-        if(!verifyRequiredKeys($homeData, $requiredKeys)){
-            send_error_response('missing arguement', 400);
-            return;
-        }
+        // Upload the file
+      
+        $fileUpload = new FileUpload($_FILES['imageFile'], ROOT.HOMESTAY_IMG_FOLDER, MAX_FILE_SIZE);
+        $img_addr = $fileUpload->commitUpload();
+        // print_r("all good");
+        // print_r("upload result: ".$img_addr);
+        // $img_addr = HOMESTAY_IMG_DIR. DIRECTORY_SEPARATOR . basename($file['name']);
 
+       
+        
         print_r("all good");
 
         $homeTmpRating = 3; //tempory rating is set to 3 because the review system is not implemented
@@ -71,9 +86,8 @@ $addHomestay = Route::path('/addHome')
         //Loop through each amenity and insert if not exists
 
         //build relation between homestay_id and amenities_id in homestay_amenities table
-        foreach ($homeData['amenities'] as $amenity) {
-
-            print_r("each amenity: ".$amenity."\n");
+        foreach ($amenities as $amenity) {
+         
             //check if the amenity exists in the amenities table
             $amenityExists = QueryBuilder::create($database->connection)
                 ->select()
@@ -131,7 +145,7 @@ $addHomestay = Route::path('/addHome')
             ->into('homestay_images')
             ->values([ 
                 'homestay_id'=>$homestay_id,
-                'image_path'=>$homeData['image_path'], 
+                'image_path'=>$img_addr , 
             ])
           
             ->execute();

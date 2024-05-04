@@ -65,7 +65,8 @@ class File{
         function __construct($srcFile,$destAddr,$sizeCap)
         {
             $this->srcFile = $srcFile;
-            $this->destAddr = $destAddr."/".$this->srcFile['name']; // get the file name
+            $this->destAddr = $destAddr; // destination address -> absolute path
+            print_r("here is dest addr ".$this->destAddr);
             $this->sizeCap = $sizeCap;
         }
 
@@ -77,6 +78,7 @@ class File{
 
         private function ext_Chk(){
             $contType= substr($this->srcFile['type'],0,stripos($this->srcFile['type'],"/"));
+            print_r("here is cont type ".$contType);
             switch($contType){
                 case "image":
                     $extArray = ["jpeg","jpg","png","bmp","webp"];
@@ -87,27 +89,52 @@ class File{
                 default:
                     throw new Exception("Invalid file type",403);
             }
+          
             $finfo = new finfo(FILEINFO_MIME_TYPE); // get the file type
+          
             $realExt=basename($finfo->file($this->srcFile['tmp_name'])); // get the file extension
 
-            if(!(false==array_search($realExt,$extArray))){ // check if the file type is in the array
-                return true;
+            if (in_array($realExt,$extArray)) {
+                echo "jpeg is in the array.";
+            } else {
+                throw new Exception("Invalid file type",403);
             }
-            throw new Exception("Invalid file type",403);
+            
+    
         }
 
         function commitUpload(){
       
             $this->fileSize();
+        
             $this->ext_Chk();
-            if(!move_uploaded_file($this->srcFile['tmp_name'],$this->destAddr)){
-                throw new Exception("File upload failed",500);
+
+            // $directoryPath = ROOT. '/homestayImg';  // Absolute path to the directory.
+
+            // Check if the directory exists, if not, create it.
+            if (!is_dir( $this->destAddr)) {
+                if (!mkdir( $this->destAddr, 0755, true)) {  
+                    throw new Exception("Failed to create directory", 500);
+                }
             }
-            
+
+            // Create the full path for the file to be moved to
+            $fullFilePath =  $this->destAddr . '/' . basename($this->srcFile['name']);
+
+            // Move the uploaded file to the newly created directory
+            if (!move_uploaded_file($this->srcFile['tmp_name'], $fullFilePath)) {
+                throw new Exception("File upload failed", 500);
+            }
+
+            print_r("here is src name".$this->srcFile['name']);
+            print_r("here is dest addr ".$this->destAddr."\n");
             //how to use substr -> substr("Hello",1,3) -> "ell"
-            $destAddr = $_SERVER["REQUEST_SCHEME"]."://".$_SERVER["SERVER_ADDR"].substr($_SERVER["SCRIPT_NAME"],0,stripos($_SERVER["SCRIPT_NAME"],"classSolution.php")).substr($this->destAddr,3); 
+            $destAddr = $_SERVER["REQUEST_SCHEME"]."://".$_SERVER["SERVER_ADDR"].substr($_SERVER["SCRIPT_NAME"],0,stripos($_SERVER["SCRIPT_NAME"],"index.php")).substr(HOMESTAY_IMG_FOLDER,1)."/".$this->srcFile['name']; 
             
             return  $destAddr ;
         }
 
     }
+    // current seems the route is not properly -> C:\xampp\htdocs\webdev6\php_server_BookMyHomestay\src//homestayImg\father_and_son.webp
+
+    // C:\xampp\htdocs\webdev6\php_server_BookMyHomestay\src//homestayImg
