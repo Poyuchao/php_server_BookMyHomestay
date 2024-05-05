@@ -60,14 +60,14 @@ $POST_LOGIN = Route::path('/login')
 
 
 
-        try {
-            $sid = $_POST['sid'];
-            Session_Hanlder($sid);
-            echo json_encode(["message" => "Session is valid and active."]);
-        } catch (Exception $e) {
-            http_response_code($e->getCode());
-            echo json_encode(["error" => $e->getMessage()]);
-        }
+        // try {
+        //     $sid = $_POST['sid'];
+        //     Session_Hanlder($sid);
+        //     echo json_encode(["message" => "Session is valid and active."]);
+        // } catch (Exception $e) {
+        //     http_response_code($e->getCode());
+        //     echo json_encode(["error" => $e->getMessage()]);
+        // }
 
 
         // if (isset($_POST["sid"])) {
