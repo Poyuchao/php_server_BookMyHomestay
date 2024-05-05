@@ -3,11 +3,15 @@
 require_once ROOT . 'routes/users/routes.php';
 require_once ROOT . 'utils/send-response.php';
 require_once ROOT . 'database/index.php';
-require_once ROOT . 'routes/login/login.php'; 
+require_once ROOT . 'routes/login/login.php';
+require_once ROOT . 'routes/admin/rehash.php';
 require_once ROOT . 'routes/register/register.php';
 require_once ROOT . 'routes/addHomestay/addHomestay.php';
 require_once ROOT . 'routes/loadJson/loadJson.php';
 require_once ROOT . 'routes/login/login.php';
+require_once ROOT . 'utils/decode-json.php';
+require_once ROOT . 'utils/get-session.php';
+
 
 $ROUTES = [
   'GET' => [
@@ -21,29 +25,34 @@ $ROUTES = [
     $PATCH_USER,
     $addHomestay,
     $POST_LOGIN
+    $POST_USERS,
+    $POST_REHASH,
   ],
 ];
 
 //handle HTTP requests in a PHP application.
 function executeRequest()
 {
- 
-   // Set CORS headers
-   header("Access-Control-Allow-Origin: *");
-   header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
-   header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
- 
-   // Handle preflight CORS requests
-   if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
-       // Return status 200 OK
-       header("HTTP/1.1 200 OK");
-       return;
-   }
-   
-  global $ROUTES; 
-  
+
+  // Set CORS headers
+  header("Access-Control-Allow-Origin: *");
+  header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
+  header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
+
+  // Handle preflight CORS requests
+  if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+    // Return status 200 OK
+    header("HTTP/1.1 200 OK");
+    return;
+  }
+
+  // Decode JSON body if content type is application/json and set it to $_POST
+  decodeBodyIfJson();
+
+  global $ROUTES;
+
   $method = $_SERVER['REQUEST_METHOD']; // GET, POST, PUT, DELETE
-  $path = $_SERVER['REQUEST_URI'];       
+  $path = $_SERVER['REQUEST_URI'];
 
   $method = $_SERVER['REQUEST_METHOD'];
   $path = $_SERVER['REQUEST_URI'];
@@ -59,13 +68,25 @@ function executeRequest()
 
   $route = $ROUTES[$method]; //get the routes for the specific HTTP method from the $ROUTES array.
 
+  $userSession = getSession();
 
   //iterates over each route in the $route  array and checks if the route matches the requested method and path.
   for ($i = 0; $i < count($route); $i++) {
     //checks if the route matches the requested method and path using the isMatch method of the Route class.
-    $routeMatch = $route[$i]->isMatch($method, $path);
+    $currentRoute = $route[$i];
+    $routeMatch = $currentRoute->isMatch($method, $path);
 
     if ($routeMatch['isMatch']) {
+      if ($currentRoute->isAuthenticated && !$userSession) {
+        send_error_response('Unauthorized', 401);
+        return;
+      }
+
+      if ($currentRoute->isAdmin && $userSession['user']['type'] !== 'admin') {
+        send_error_response('Unauthorized', 401);
+        return;
+      }
+
       $database = new Database();
 
       $route[$i]->handler->__invoke($routeMatch['params'], $database);
