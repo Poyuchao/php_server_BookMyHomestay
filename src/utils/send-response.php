@@ -25,3 +25,18 @@ function send_non_data_response()
   header('Content-Type: application/json');
   http_response_code(204);
 }
+
+
+
+function sendHttpCode($code,$message,$die_flag=false)
+{   
+    http_response_code($code);
+ 
+    if($die_flag){
+        die($message);
+    }
+    else{
+        echo $message;
+    }
+    
+}

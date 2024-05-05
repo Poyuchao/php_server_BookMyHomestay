@@ -8,7 +8,7 @@ $loginRoute = (new RouteBuilder())
     ->setHandler(function ($params) {
     })
     ->build();
-    echo "hi";
+   
 
 
 function login($UserEmail)

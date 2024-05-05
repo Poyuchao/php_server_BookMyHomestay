@@ -119,7 +119,7 @@ class File{
             }
 
             // Create the full path for the file to be moved to
-            $fullFilePath =  $this->destAddr . '/' . basename($this->srcFile['name']);
+            $fullFilePath =  $this->destAddr . '/' . basename($this->srcFile['name']); 
 
             // Move the uploaded file to the newly created directory
             if (!move_uploaded_file($this->srcFile['tmp_name'], $fullFilePath)) {

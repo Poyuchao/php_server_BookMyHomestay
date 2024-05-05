@@ -24,13 +24,29 @@ $addHomestay = Route::path('/addHome')
         // }
 
         // Construct the path relative to this script's location
-
-
+        
+        checkKeys($_POST, ['title', 'desc', 'location', 'price_per_month', 'vegetarian_friendly', 'amenities']);
 
         $logged_in_user_id = 1; //tempory user id is set to 1 because the login is not implemented
 
-        // $json = file_get_contents("php://input"); // Get JSON as a string from php://input
+        //verify the title is not shorter than 5 characters and contains only letters and spaces and not longer than 50 characters
+        if (!preg_match('/^[a-zA-Z\s]{5,50}$/', $_POST['title'])) {
+            sendHttpCode(401,'Title must be between 5 and 50 characters and contain only letters and spaces allowed');
+            return;
+        }
 
+        //verify the desc is not shorter than 10 characters
+        if (strlen($_POST['desc']) < 10) {
+            sendHttpCode(401,'Description must be at least 20 characters');
+            return;
+        }
+
+      
+        //verify the price is a number
+        if (!is_numeric($_POST['price_per_month'])) {
+            sendHttpCode( 401,'Please enter a numeric value for the price.');
+            return;
+        }
 
         $amenities = explode(',', $_POST['amenities']); // Split the string into an array
         $homeData = $_POST; // get the homestay data from the form
@@ -44,6 +60,7 @@ $addHomestay = Route::path('/addHome')
             echo "</pre>";
         } else {
             echo "No file uploaded.";
+            sendHttpCode( 401,'Please upload an image file.');
         }
 
       
