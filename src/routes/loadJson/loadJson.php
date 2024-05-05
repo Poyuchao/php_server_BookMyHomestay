@@ -34,7 +34,7 @@ $LOAD_USERS_FROMJSON =  Route::path('/loadUsers')
                     ->execute();
             }
         } else {
-            die("Error: Unable to parse users data as an array.");
+            die("Error: Unable to parse users data as an array. ");
         }
     } else {
         fclose($file);
