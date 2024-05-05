@@ -1,6 +1,5 @@
 <?php
-require_once ROOT . 'utils/function.php';
-
+require_once ROOT . 'structures/Function.php';
 
 class Person
 {
@@ -89,14 +88,11 @@ class Person
                 ->execute();
         }
 
-
-
+        //$insertCmd = "INSERT INTO user "
         // UPDATE [table_name] SET [col_name]= new_nalue WHERE condition 
         if ($loginFlag !== true) {
-            // print_r("login flag " . $loginFlag . "\n");
             switch ($loginFlag) {
                 case "email":
-
                     //Audit_generator("login", "failed", "Invalid email address.", $this->email);
                     send_error_response("Username/Password Wrong.", 401);
 
@@ -108,11 +104,9 @@ class Person
                     send_error_response("Account is locked.", 401);
             }
         }
-
-        return $this->toArray();
+        return session_id();
     }
-
-    public function toArray()
+    function display_info()
     {
         return [
             'id' => $this->id,

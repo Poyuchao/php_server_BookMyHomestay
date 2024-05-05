@@ -6,3 +6,4 @@ docker/*
 
 src/data/logs*
 src/homestayImg
+src/structures/Person.php
