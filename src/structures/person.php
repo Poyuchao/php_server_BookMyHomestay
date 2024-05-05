@@ -1,6 +1,7 @@
 <?php
 require_once ROOT . 'structures/Function.php';
 
+
 class Person
 {
     private $id;

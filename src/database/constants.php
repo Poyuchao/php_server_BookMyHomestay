@@ -7,7 +7,6 @@ define('QUERY_BUILDER_JOIN_INNER', 'INNER JOIN');
 define('QUERY_BUILDER_JOIN_LEFT', 'LEFT JOIN');
 define('QUERY_BUILDER_JOIN_RIGHT', 'RIGHT JOIN');
 define('QUERY_BUILDER_JOIN_FULL', 'FULL JOIN');
-
 date_default_timezone_set("America/Vancouver");
 
 define("DB_SERVER_NAME", "localhost");
