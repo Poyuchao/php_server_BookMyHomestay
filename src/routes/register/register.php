@@ -17,7 +17,7 @@ $Register_user = Route::path('/reg')
 
         // check if the json data is valid
         if (!$regData) {
-            send_error_response('Invalid JSON', 400);
+            sendHttpCode(401,'Invalid JSON');
             return;
         }
 
@@ -32,13 +32,13 @@ $Register_user = Route::path('/reg')
 
         // Validate email
         if (!filter_var($regData['email'], FILTER_VALIDATE_EMAIL)) {
-            send_error_response('Invalid email', 400);
+            sendHttpCode(401,'Invalid email');
             return;
         }
         
         // Validate password length
         if (strlen($regData['pass']) < 8) {
-            send_error_response('Password too small', 400);
+            sendHttpCode(401,'Password needs to be at least 8 characters long');
             return;
         }
 
@@ -49,9 +49,11 @@ $Register_user = Route::path('/reg')
             ->where('email', '=', $regData['email'])
             ->first()
             ->execute();
+
+            
         
         if ($userWithSameEmail) {
-            send_error_response('User with same email already exists', 400);
+            sendHttpCode(402,'User with same email already exists');
             return;
         }
 
