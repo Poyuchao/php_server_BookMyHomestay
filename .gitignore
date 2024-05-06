@@ -3,3 +3,5 @@ docker/*
 .vscode
 
 !www/.gitkeep
+
+src/data/logs*

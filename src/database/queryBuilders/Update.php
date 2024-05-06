@@ -1,5 +1,6 @@
 <?php
 require_once ROOT . 'database/constants.php';
+require_once ROOT . 'structures/Logger.php';
 
 class UpdateQueryBuilder
 {
@@ -28,6 +29,8 @@ class UpdateQueryBuilder
    */
   private array $returning = [];
 
+  private Logger $logger;
+
   /**
    * Explicitly allow dangerous queries and update without where.
    * This is a security risk and should be used with caution.
@@ -37,6 +40,8 @@ class UpdateQueryBuilder
   public function __construct(QueryBuilder $queryBuilder)
   {
     $this->queryBuilder = $queryBuilder;
+
+    $this->logger = Logger::children('QueryBuilder->UpdateQueryBuilder');
   }
 
   /**
@@ -114,7 +119,7 @@ class UpdateQueryBuilder
       $query .= " WHERE $wheres";
     }
 
-    if (QUERY_BUILDER_SEE_DEBUG) print_r($query . "\n");
+    $this->logger->debug($query);
 
     // Prepare the query and return the statement.
     $stmt = $this->queryBuilder->connection->prepare($query);
@@ -137,12 +142,9 @@ class UpdateQueryBuilder
     // Bind the values to the statement.
     $stmt->bind_param($types, ...$bindValues);
 
-    if (QUERY_BUILDER_SEE_DEBUG) {
-      print_r($types);
-      echo PHP_EOL;
-      print_r($bindValues);
-      echo PHP_EOL;
-    }
+    $this->logger->debug($types);
+    $this->logger->debug($bindValues);
+
 
     return $stmt;
   }
@@ -161,7 +163,7 @@ class UpdateQueryBuilder
     }
     $query .= implode(' AND ', $wheres);
 
-    if (QUERY_BUILDER_SEE_DEBUG) print_r($query . "\n");
+    $this->logger->debug($query);
 
     $stmt = $this->queryBuilder->connection->prepare($query);
     if (!$stmt) {

@@ -2,7 +2,7 @@
 
 require_once ROOT . 'utils/stdout-log.php';
 require_once ROOT . 'utils/send-response.php';
-
+require_once ROOT . 'structures/Logger.php';
 
 //
 class Route
@@ -14,6 +14,8 @@ class Route
   public bool $isAdmin = FALSE;
   public $handler;
 
+  private Logger $logger;
+
 
   //The constructor initializes the handler with a default function that sends a "405 Method Not Implemented" 
   //error if no specific handler is assigned later. 
@@ -23,6 +25,8 @@ class Route
     $this->handler = function () {
       send_error_response('Route handler not implemented', 405);
     };
+
+    $this->logger = Logger::children('Route');
   }
 
 
@@ -35,7 +39,7 @@ class Route
     // checks if the request's method matches the route's method. If not, 
     //it logs the mismatch and returns false for the match, along with an empty parameters array.
     if ($this->method !== $method) {
-      debugLog('[' . $this->__toString() . "] Method does not match: $this->method !== $method");
+      $this->logger->debug('[' . $this->__toString() . "] Method does not match: $this->method !== $method");
       return [
         'isMatch' => FALSE,
         'params' => []
@@ -63,12 +67,12 @@ class Route
 
     $routeParts = $this->routeParts;
 
-    debugLog('Path parts: ' . json_encode($pathParts));
-    debugLog('Route parts: ' . json_encode($routeParts));
+    $this->logger->debug('Path parts: ' . json_encode($pathParts));
+    $this->logger->debug('Route parts: ' . json_encode($routeParts));
 
     // Check if path has the same number of parts as the route
     if (count($pathParts) !== count($routeParts)) {
-      debugLog('[' . $this->__toString() . "] Path parts do not match: " . count($pathParts) . ' !== ' . count($routeParts));
+      $this->logger->debug('[' . $this->__toString() . "] Path parts do not match: " . count($pathParts) . ' !== ' . count($routeParts));
       return [
         'isMatch' => FALSE,
         'params' => []

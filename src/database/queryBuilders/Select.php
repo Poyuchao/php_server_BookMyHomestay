@@ -1,6 +1,6 @@
 <?php
 require_once ROOT . 'database/constants.php';
-
+require_once ROOT . 'structures/Logger.php';
 class SelectQueryBuilder
 {
   /**
@@ -40,6 +40,8 @@ class SelectQueryBuilder
    */
   private bool $first = false;
 
+  private Logger $logger;
+
   /**
    * The constructor of the SelectQueryBuilder class.
    */
@@ -48,6 +50,8 @@ class SelectQueryBuilder
     $this->queryBuilder = $queryBuilder;
     // Sanitize the column names and store them in the columns array.
     $this->columns = array_map(fn ($column) => $this->queryBuilder->sanitizeName($column), $columns);
+
+    $this->logger = Logger::children('QueryBuilder->SelectQueryBuilder');
   }
 
   /**
@@ -262,7 +266,7 @@ class SelectQueryBuilder
       $query .= " OFFSET $this->offset";
     }
 
-    if (QUERY_BUILDER_SEE_DEBUG) print_r($query . "\n");
+    $this->logger->debug($query);
 
     // Prepare the query.
     $statement = $this->queryBuilder->connection->prepare($query);
@@ -283,12 +287,9 @@ class SelectQueryBuilder
       // Bind the values to the statement to prevent SQL injection.
       $statement->bind_param($types, ...$values);
 
-      if (QUERY_BUILDER_SEE_DEBUG) {
-        print_r($types);
-        echo PHP_EOL;
-        print_r($values);
-        echo PHP_EOL;
-      }
+
+      $this->logger->debug($types);
+      $this->logger->debug($values);
     }
 
     return $statement;

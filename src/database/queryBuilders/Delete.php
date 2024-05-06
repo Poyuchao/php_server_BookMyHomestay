@@ -1,4 +1,5 @@
 <?php
+require_once ROOT . 'structures/Logger.php';
 
 class DeleteQueryBuilder
 {
@@ -25,12 +26,16 @@ class DeleteQueryBuilder
    */
   private bool $allowDangerousQueries = false;
 
+  private Logger $logger;
+
   /**
    * The constructor of the DeleteQueryBuilder class.
    */
   function __construct(QueryBuilder $queryBuilder)
   {
     $this->queryBuilder = $queryBuilder;
+
+    $this->logger = Logger::children('QueryBuilder->DeleteQueryBuilder');
   }
 
   /**
@@ -94,7 +99,7 @@ class DeleteQueryBuilder
       $query .= implode(' AND ', $wheres);
     }
 
-    if (QUERY_BUILDER_SEE_DEBUG) print_r($query . "\n");
+    $this->logger->debug($query);
 
     // Prepare the query.
     $statement = $this->queryBuilder->connection->prepare($query);
@@ -115,12 +120,8 @@ class DeleteQueryBuilder
       // Bind the values to the statement to prevent SQL injection.
       $statement->bind_param($types, ...$values);
 
-      if (QUERY_BUILDER_SEE_DEBUG) {
-        print_r($types);
-        echo PHP_EOL;
-        print_r($values);
-        echo PHP_EOL;
-      }
+      $this->logger->debug($types);
+      $this->logger->debug($values);
     }
 
     return $statement;

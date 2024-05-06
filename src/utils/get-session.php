@@ -13,15 +13,15 @@ function getSession(): array|null
     $session = $_SESSION;
 
     if (!isset($session['user'])) {
-      return send_error_response('Unauthorized', 401);
+      return null;
     }
 
     if (!isset($session['timestamp'])) {
-      return send_error_response('User session expired', 401);
+      return null;
     }
 
     if (time() - $session['timestamp'] > SESSION_EXPIRATION) {
-      return send_error_response('User session expired', 401);
+      return null;
     }
 
     return $session;

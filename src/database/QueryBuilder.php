@@ -5,8 +5,6 @@ require_once ROOT . 'database/queryBuilders/Update.php';
 require_once ROOT . 'database/queryBuilders/Delete.php';
 require_once ROOT . 'database/queryBuilders/Raw.php';
 
-define('QUERY_BUILDER_SEE_DEBUG', false);
-
 class QueryBuilder
 {
   /**
@@ -90,8 +88,6 @@ class QueryBuilder
 
     $explodedColumnNames = explode('.', $name);
     $sanitizedColumnNames = array_map(fn ($column) => "`" . $this->connection->real_escape_string($column) . "`", $explodedColumnNames);
-
-    // print_r($sanitizedColumnNames);
 
     return implode('.', $sanitizedColumnNames);
   }

@@ -1,6 +1,7 @@
 <?php
 
 require_once ROOT . 'routes/users/routes.php';
+require_once ROOT . 'routes/liked/routes.php';
 require_once ROOT . 'utils/send-response.php';
 require_once ROOT . 'database/index.php';
 require_once ROOT . 'routes/login/login.php';
@@ -11,6 +12,8 @@ require_once ROOT . 'routes/loadJson/loadJson.php';
 require_once ROOT . 'routes/login/login.php';
 require_once ROOT . 'utils/decode-json.php';
 require_once ROOT . 'utils/get-session.php';
+require_once ROOT . 'structures/Logger.php';
+
 
 
 $ROUTES = [
@@ -18,15 +21,16 @@ $ROUTES = [
     $LOAD_USERS_FROMJSON, //The $LOAD_USERS_FROMJSON variable is an instance of the Route class that defines the route for loading users from a JSON file.
     $GET_USERS, //The $GET_USERS variable is an instance of the Route class that defines the route for getting all users.
     $GET_USER,  //The $GET_USER variable is an instance of the Route class that defines the route for getting a specific user.
-    // $GET_HOMES
+    $GET_LIKED_HOMESTAYS, //The $GET_LIKED_HOMESTAYS variable is an instance of the Route class that defines the route for getting liked homestays.
   ],
   'POST' => [
     $Register_user,
     $PATCH_USER,
     $addHomestay,
-    $POST_LOGIN
-    $POST_USERS,
+    $POST_LOGIN,
     $POST_REHASH,
+    $POST_ADD_LIKED_HOMESTAY, //The $ADD_LIKED_HOMESTAY variable is an instance of the Route class that defines the route for adding a liked homestay.
+    $POST_DELETE_LIKED_HOMESTAY, //The $DELETE_LIKED_HOMESTAY variable is an instance of the Route class that defines the route for deleting a liked homestay.
   ],
 ];
 
@@ -77,6 +81,7 @@ function executeRequest()
     $routeMatch = $currentRoute->isMatch($method, $path);
 
     if ($routeMatch['isMatch']) {
+      Logger::globalInfo('Route matched: ' . $currentRoute->path);
       if ($currentRoute->isAuthenticated && !$userSession) {
         send_error_response('Unauthorized', 401);
         return;
@@ -88,8 +93,9 @@ function executeRequest()
       }
 
       $database = new Database();
+      $authUser = $userSession ? $userSession['user'] : null;
 
-      $route[$i]->handler->__invoke($routeMatch['params'], $database);
+      $route[$i]->handler->__invoke($routeMatch['params'], $database, $authUser);
       return;
     }
   }
