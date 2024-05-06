@@ -9,8 +9,8 @@ define('QUERY_BUILDER_JOIN_RIGHT', 'RIGHT JOIN');
 define('QUERY_BUILDER_JOIN_FULL', 'FULL JOIN');
 
 define("DB_SERVER_NAME","localhost");
-define("DB_USER_NAME", "phpAgentTeamA");
-define("DB_PASSWORD", "test12345");
+define("DB_USER_NAME", "root");
+define("DB_PASSWORD", "");
 define("DB_NAME", "bookmyhomestay");
 
 define('QUERY_BUILDER_AND_WHERE', 'AND');
