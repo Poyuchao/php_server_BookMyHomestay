@@ -136,17 +136,10 @@ class DeleteQueryBuilder
     // Build the query and execute it.
     $statement = $this->buildQuery();
     $statement->execute();
-    // Get the result of the query and return it.
-    $result = $statement->get_result();
-    $allRows = $result->fetch_all(MYSQLI_ASSOC);
-
-    if ($this->first) {
-      return count($allRows) > 0 ? $allRows[0] : NULL;
-    }
 
     // Close the statement and return the result.
     $statement->close();
-    return $allRows;
+    return $statement;
   }
 
   /**

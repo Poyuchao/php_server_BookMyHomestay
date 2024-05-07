@@ -8,6 +8,7 @@ require_once ROOT . 'structures/index.php';
 require_once ROOT . 'structures/fileHandle.php';
 require_once ROOT . 'utils/config.php';
 require_once ROOT . 'utils/parse-order.php';
+require_once ROOT . 'utils/get-homestay-extras.php';
 
 $GET_HOMES = Route::path('/homes')
   ->setMethod('GET')
@@ -50,24 +51,7 @@ $GET_HOMES = Route::path('/homes')
 
     $homestays = $queryBuilder->execute();
 
-    for ($i = 0; $i < count($homestays); $i++) {
-      $homestays[$i]['images'] = QueryBuilder::create($database->connection)
-        ->select()
-        ->from('homestay_images')
-        ->where('homestay_id', '=', $homestays[$i]['id'])
-        ->execute();
-
-      $homestayAmenities = QueryBuilder::create($database->connection)
-        ->select(['amenities.name'])
-        ->from('homestays_amenities')
-        ->where('homestay_id', '=', $homestays[$i]['id'])
-        ->innerJoin('amenities', 'amenities.id', 'homestays_amenities.amenities_id')
-        ->execute();
-
-      $homestays[$i]['amenities'] = array_map(function ($amenity) {
-        return $amenity['name'];
-      }, $homestayAmenities);
-    }
+    $homestays = getHomestayExtras($database, $homestays);
 
     send_response($homestays, 200);
   })
