@@ -5,6 +5,7 @@ class Logger
   private static $instance = null;
 
   public static $LOG_LEVELS = [
+    'VERBOSE' => -1,
     'DEBUG' => 0,
     'INFO' => 1,
     'ERROR' => 2
@@ -44,6 +45,14 @@ class Logger
       self::$instance = new Logger();
     }
     return self::$instance;
+  }
+
+  function verbose(mixed $message)
+  {
+    if (self::$LOG_LEVEL > self::$LOG_LEVELS['VERBOSE']) {
+      return;
+    }
+    $this->log('VERBOSE', $message);
   }
 
   function debug(mixed $message)

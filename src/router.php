@@ -2,14 +2,12 @@
 
 require_once ROOT . 'routes/users/routes.php';
 require_once ROOT . 'routes/liked/routes.php';
+require_once ROOT . 'routes/auth/routes.php';
+require_once ROOT . 'routes/homestays/routes.php';
 require_once ROOT . 'utils/send-response.php';
 require_once ROOT . 'database/index.php';
-require_once ROOT . 'routes/login/login.php';
 require_once ROOT . 'routes/admin/rehash.php';
-require_once ROOT . 'routes/register/register.php';
-require_once ROOT . 'routes/addHomestay/addHomestay.php';
 require_once ROOT . 'routes/loadJson/loadJson.php';
-require_once ROOT . 'routes/login/login.php';
 require_once ROOT . 'utils/decode-json.php';
 require_once ROOT . 'utils/get-session.php';
 require_once ROOT . 'structures/Logger.php';
@@ -22,15 +20,17 @@ $ROUTES = [
     $GET_USERS, //The $GET_USERS variable is an instance of the Route class that defines the route for getting all users.
     $GET_USER,  //The $GET_USER variable is an instance of the Route class that defines the route for getting a specific user.
     $GET_LIKED_HOMESTAYS, //The $GET_LIKED_HOMESTAYS variable is an instance of the Route class that defines the route for getting liked homestays.
+    $GET_HOMES, //The $GET_HOMES variable is an instance of the Route class that defines the route for getting homestays.
   ],
   'POST' => [
-    $Register_user,
     $PATCH_USER,
     $addHomestay,
     $POST_LOGIN,
+    $POST_REGISTER,
+    $POST_LOGOUT,
     $POST_REHASH,
-    $POST_ADD_LIKED_HOMESTAY, //The $ADD_LIKED_HOMESTAY variable is an instance of the Route class that defines the route for adding a liked homestay.
-    $POST_DELETE_LIKED_HOMESTAY, //The $DELETE_LIKED_HOMESTAY variable is an instance of the Route class that defines the route for deleting a liked homestay.
+    $POST_ADD_FAVORITE_HOMESTAY, //The $ADD_LIKED_HOMESTAY variable is an instance of the Route class that defines the route for adding a liked homestay.
+    $POST_DELETE_FAVORITE_HOMESTAY, //The $DELETE_LIKED_HOMESTAY variable is an instance of the Route class that defines the route for deleting a liked homestay.
   ],
 ];
 
@@ -41,12 +41,14 @@ function executeRequest()
   // Set CORS headers
   header("Access-Control-Allow-Origin: *");
   header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
-  header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
+  header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With, X-Token");
 
   // Handle preflight CORS requests
   if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
     // Return status 200 OK
-    header("HTTP/1.1 200 OK");
+    header(
+      $_SERVER["SERVER_PROTOCOL"] . " 200 OK"
+    );
     return;
   }
 

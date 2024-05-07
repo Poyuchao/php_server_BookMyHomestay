@@ -8,7 +8,7 @@ require_once ROOT . 'utils/check-keys.php';
 require_once ROOT . 'utils/config.php';
 
 
-$POST_LOGIN = Route::path('/log')
+$POST_LOGIN = Route::path('/login')
     ->setMethod('POST')
     ->setHandler(function ($_, Database $database) {
 
@@ -44,7 +44,10 @@ $POST_LOGIN = Route::path('/log')
             $jsonUser = $person->authenticate($pass, $database->connection);
 
             // print_r($jsonUser);
-            send_response($jsonUser, 201);
+            send_response([
+                'user' => $jsonUser,
+                'session' => session_id()
+            ], 201);
         } catch (Exception $e) {
 
             send_error_response('Login failed', 400);

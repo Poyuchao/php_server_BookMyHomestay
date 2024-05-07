@@ -10,6 +10,7 @@ require_once ROOT . 'utils/config.php';
 
 $addHomestay = Route::path('/addHome')
   ->setMethod('POST')
+  ->setAuthenticated()
   ->setHandler(function ($_, Database $database) {
 
 
@@ -27,7 +28,7 @@ $addHomestay = Route::path('/addHome')
 
     checkKeys($_POST, ['title', 'desc', 'location', 'price_per_month', 'vegetarian_friendly', 'amenities']);
 
-    $logged_in_user_id = 1; //tempory user id is set to 1 because the login is not implemented
+    $logged_in_user_id = $_SESSION['user']['id'];
 
     //verify the title is not shorter than 5 characters and contains only letters and spaces and not longer than 50 characters
     if (!preg_match('/^[a-zA-Z\s]{5,50}$/', $_POST['title'])) {
@@ -52,13 +53,7 @@ $addHomestay = Route::path('/addHome')
     $homeData = $_POST; // get the homestay data from the form
 
     // check file is uploaded
-    if (isset($_FILES['imageFile'])) {
-      $file = $_FILES['imageFile'];
-      echo "Received file with name: " . $file['name'];
-      echo "<pre>";
-      print_r($file);
-      echo "</pre>";
-    } else {
+    if (!isset($_FILES['imageFile'])) {
       echo "No file uploaded.";
       sendHttpCode(401, 'Please upload an image file.');
     }
@@ -74,7 +69,7 @@ $addHomestay = Route::path('/addHome')
 
 
 
-    print_r("all good");
+    //print_r("all good");
 
 
     // insert the rest of the homestay data into the homestay table

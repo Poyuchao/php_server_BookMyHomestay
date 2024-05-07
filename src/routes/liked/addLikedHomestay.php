@@ -5,11 +5,22 @@ require_once ROOT . 'utils/send-response.php';
 require_once ROOT . 'utils/check-keys.php';
 require_once ROOT . 'structures/index.php';
 
-$POST_ADD_LIKED_HOMESTAY = Route::path('/liked/add')
+$POST_ADD_FAVORITE_HOMESTAY = Route::path('/favorite/add')
   ->setMethod('POST')
   ->setAuthenticated()
   ->setHandler(function ($_, Database $database, $authUser) {
     checkKeys($_POST, ['homestay_id']);
+
+    $homestay = QueryBuilder::create($database->connection)
+      ->select()
+      ->from('homestays')
+      ->where('id', '=', $_POST['homestay_id'])
+      ->first()
+      ->execute();
+
+    if (!$homestay) {
+      send_error_response('Homestay not found', 404);
+    }
 
     $hasLiked = QueryBuilder::create($database->connection)
       ->select()

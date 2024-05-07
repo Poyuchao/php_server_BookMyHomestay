@@ -12,7 +12,6 @@ class Person
     private $gender;
     private $vegetarian;
     private $budget;
-    private $type;
     private $location;
     private $created_at;
     private $failed_attempts;
@@ -44,6 +43,7 @@ class Person
             if ($loginUser["failed_attempts"] == 0) {  // need to account lock
 
             }
+
             if (password_verify($pass, $loginUser['pass'])) {  //$row['pass'] means hash password
 
                 $loginFlag = true;
@@ -56,13 +56,17 @@ class Person
                 $this->budget = $loginUser['budget'];
 
                 $this->location = $loginUser['location'];
-                $this->type = $loginUser['type'];
                 $this->id = $loginUser['id'];
                 $this->created_at = $loginUser['created_at'];
                 $this->failed_attempts = $loginUser['failed_attempts'];
-                session_start();
-                $_SESSION["login_user"] = $this;
-                $_SESSION["time_out"] = time() + TIME_OUT;
+                $sectionStarted = session_start();
+
+                if (!$sectionStarted) {
+                    throw new Exception("Session could not be started.", 500);
+                }
+
+                $_SESSION["user"] = $this->toArray();
+                $_SESSION["timestamp"] = time();
 
 
                 // Audit_generator("login", "success", "User login via password.", $this->email);
@@ -107,7 +111,6 @@ class Person
             'lname' => $this->lname,
             'email' => $this->email,
             'gender' => $this->gender,
-            'type' => $this->type,
             'vegetarian' => $this->vegetarian,
             'budget' => $this->budget,
             'location' => $this->location,

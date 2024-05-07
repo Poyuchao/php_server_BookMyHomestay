@@ -5,3 +5,4 @@ docker/*
 !www/.gitkeep
 
 src/data/logs*
+src/homestayImg

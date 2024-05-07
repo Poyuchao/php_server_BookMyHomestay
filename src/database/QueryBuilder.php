@@ -11,6 +11,7 @@ class QueryBuilder
    * The connection to the database.
    */
   public mysqli $connection;
+
   /**
    * The instance of the SelectQueryBuilder or InsertQueryBuilder class.
    */
@@ -77,6 +78,21 @@ class QueryBuilder
     return $this->queryBuilder;
   }
 
+  function transaction(callable $callback)
+  {
+    $this->connection->begin_transaction();
+
+    try {
+      $returnValue = $callback($this->connection);
+      $this->connection->commit();
+
+      return $returnValue;
+    } catch (Exception $e) {
+      $this->connection->rollback();
+      throw $e;
+    }
+  }
+
   /**
    * Sanitize the name of a column or table.
    */
@@ -87,7 +103,13 @@ class QueryBuilder
     }
 
     $explodedColumnNames = explode('.', $name);
-    $sanitizedColumnNames = array_map(fn ($column) => "`" . $this->connection->real_escape_string($column) . "`", $explodedColumnNames);
+    $sanitizedColumnNames = array_map(function ($column) {
+      if ($column === '*') {
+        return $column;
+      }
+
+      return "`" . $this->connection->real_escape_string($column) . "`";
+    }, $explodedColumnNames);
 
     return implode('.', $sanitizedColumnNames);
   }

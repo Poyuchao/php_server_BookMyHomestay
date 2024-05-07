@@ -17,4 +17,4 @@ define('QUERY_BUILDER_AND_WHERE', 'AND');
 define('QUERY_BUILDER_OR_WHERE', 'OR');
 
 
-const ALLOWED_OPERATORS = ['=', '!=', '>', '<', '>=', '<=', 'ILIKE', 'LIKE', 'NOT LIKE', 'IN', 'NOT IN'];
+const ALLOWED_OPERATORS = ['=', '!=', '>', '<', '>=', '<=', 'LIKE', 'NOT LIKE', 'IN', 'NOT IN'];
