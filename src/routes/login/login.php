@@ -12,7 +12,7 @@ $POST_LOGIN = Route::path('/log')
     ->setMethod('POST')
     ->setHandler(function ($_, Database $database) {
 
-      
+        // echo "user login is working ";
         $email = $_POST['email'];
         // $password = password_hash($_POST["pass"], PASSWORD_BCRYPT, ["cost" => 10]);
         $pass = $_POST['pass'];
@@ -42,8 +42,8 @@ $POST_LOGIN = Route::path('/log')
         try {
             $person = new Person($email);
             $jsonUser = $person->authenticate($pass, $database->connection);
+            // encode the user array to json
           
-            // print_r($jsonUser);
             send_response($jsonUser,201);
             
         } catch (Exception $e) {
