@@ -8,7 +8,7 @@ require_once ROOT . 'utils/check-keys.php';
 require_once ROOT . 'utils/config.php';
 
 
-$POST_LOGIN = Route::path('/login')
+$POST_LOGIN = Route::path('/log')
     ->setMethod('POST')
     ->setHandler(function ($_, Database $database) {
 

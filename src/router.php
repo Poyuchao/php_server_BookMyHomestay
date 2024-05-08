@@ -16,6 +16,7 @@ require_once ROOT . 'structures/Logger.php';
 
 $ROUTES = [
   'GET' => [
+    $LOAD_HOMESTAYS_FROMJSON, //The $LOAD_HOMESTAYS_FROMJSON variable is an instance of the Route class that defines the route for loading homestays from a JSON file.
     $LOAD_USERS_FROMJSON, //The $LOAD_USERS_FROMJSON variable is an instance of the Route class that defines the route for loading users from a JSON file.
     $GET_USERS, //The $GET_USERS variable is an instance of the Route class that defines the route for getting all users.
     $GET_USER,  //The $GET_USER variable is an instance of the Route class that defines the route for getting a specific user.
