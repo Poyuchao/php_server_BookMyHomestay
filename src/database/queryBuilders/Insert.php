@@ -1,4 +1,5 @@
 <?php
+require_once ROOT . 'structures/Logger.php';
 
 class InsertQueryBuilder
 {
@@ -24,9 +25,13 @@ class InsertQueryBuilder
    */
   private array $returning = [];
 
+  private Logger $logger;
+
   function __construct(QueryBuilder $queryBuilder)
   {
     $this->queryBuilder = $queryBuilder;
+
+    $this->logger = Logger::children('QueryBuilder->InsertQueryBuilder');
   }
 
   /**
@@ -74,7 +79,7 @@ class InsertQueryBuilder
     // Create the query string, e.g. INSERT INTO table (column1, column2, column3) VALUES (?, ?, ?).
     $query = "INSERT INTO $this->table ($columns) VALUES ($values)";
 
-    if (QUERY_BUILDER_SEE_DEBUG) print_r($query . "\n");
+    $this->logger->debug($query);
 
     // Prepare the query
     $statement = $this->queryBuilder->connection->prepare($query);
@@ -93,10 +98,8 @@ class InsertQueryBuilder
     // Bind the values to the statement to prevent SQL injection.
     $statement->bind_param($types, ...$this->values);
 
-    if (QUERY_BUILDER_SEE_DEBUG) {
-      print_r($this->values);
-      echo "\n";
-    }
+    $this->logger->debug($this->values);
+
 
     return $statement;
   }
@@ -111,7 +114,7 @@ class InsertQueryBuilder
 
     $query = "SELECT $columns FROM $this->table WHERE id = LAST_INSERT_ID()";
 
-    if (QUERY_BUILDER_SEE_DEBUG) print_r($query . "\n");
+    $this->logger->debug($query);
 
     $result = $this->queryBuilder->connection->query($query);
 
