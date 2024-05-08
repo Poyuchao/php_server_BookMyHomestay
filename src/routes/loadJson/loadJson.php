@@ -62,7 +62,7 @@ $LOAD_HOMESTAYS_FROMJSON =  Route::path('/loadHomestays')
                 ->insert()
                 ->into('homestays')
                 ->values([
-                    'owner_id' => $owner_id, //random int 1-25 
+                    'owner_id' => $owner_id, //random int 1-25 , simulating owner id 
                     'title' => $homestay['title'],
                     'desc' => $homestay['desc'],
                     'location' => $homestay['location'],
