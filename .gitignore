@@ -3,3 +3,6 @@ docker/*
 .vscode
 
 !www/.gitkeep
+
+src/data/logs*
+src/homestayImg

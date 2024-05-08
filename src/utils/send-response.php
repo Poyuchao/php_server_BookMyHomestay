@@ -34,6 +34,10 @@ function sendHttpCode($code, $message, $die_flag = false)
 {
   http_response_code($code);
 
+  if ($code >= 400) {
+    $message = json_encode(['error' => $message]);
+  }
+
   if ($die_flag) {
     die($message);
   } else {
