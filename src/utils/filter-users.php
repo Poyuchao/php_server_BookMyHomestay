@@ -2,6 +2,7 @@
 
 function filtersUser($user)
 {
-  unset($user['password']);
+  // Remove the password from the user object
+  unset($user['pass']);
   return $user;
 }

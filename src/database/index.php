@@ -27,7 +27,7 @@ class Database
 
       $this->connection->set_charset('utf8mb4');
     } catch (Exception $e) {
-      $this->logger->error('Exception: ' . $e->getMessage());
+      $this->logger->error('Exception: ' . $e->getMessage() . ' in ' . $e->getFile() . ' on line ' . $e->getLine());
       send_error_response('Database connection error', 500);
     }
   }

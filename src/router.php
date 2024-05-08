@@ -90,7 +90,7 @@ function executeRequest()
         return;
       }
 
-      if ($currentRoute->isAdmin && $userSession['user']['type'] !== 'admin') {
+      if ($currentRoute->isAdmin && !$userSession['user']['admin']) {
         send_error_response('Unauthorized', 401);
         return;
       }

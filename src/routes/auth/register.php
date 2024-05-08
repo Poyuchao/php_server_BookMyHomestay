@@ -5,7 +5,7 @@ require_once ROOT . 'utils/send-response.php';
 require_once ROOT . 'utils/check-keys.php';
 require_once ROOT . 'structures/index.php';
 
-$POST_REGISTER = Route::path('/reg')
+$POST_REGISTER = Route::path('/register')
     ->setMethod('POST')
     ->setHandler(function ($_, Database $database) {
         // Get JSON as a string from php://input
