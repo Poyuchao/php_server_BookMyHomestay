@@ -16,14 +16,14 @@ class Person
     private $location;
     private $created_at;
     private $failed_attempts;
+
     function __construct($email)
     {
         $this->email = $email;
     }
+
     function authenticate($pass, $dbCon)
     {
-
-
         $loginUser = QueryBuilder::create($dbCon)
             ->select()
             ->from('users')
@@ -31,25 +31,24 @@ class Person
             ->first()
             ->execute();
 
-        // Check
-
-
         $loginFlag = "email";
         $attempt = null;
 
+        // If the user is locked
         if ($loginUser["failed_attempts"] <= 0) {  // need to account lock
             $loginFlag = "lock";
-        } elseif ($loginUser) { //クエリの結果が1行以上ある
-
-
+        } elseif ($loginUser) { //クエリの結果が1行以上ある (By ryoko)
+            // Get the number of failed attempts
             $attempt = $loginUser["failed_attempts"];
 
-
+            // Check if the password is correct
             if (password_verify($pass, $loginUser['pass'])) {  //$row['pass'] means hash password
 
+                // If the password is correct, reset the failed attempts
                 $loginFlag = true;
                 $attempt = 5;
 
+                // Set the user's data
                 $this->fname = $loginUser['fname'];
                 $this->lname = $loginUser['lname'];
                 $this->gender = $loginUser['gender'];
@@ -60,22 +59,28 @@ class Person
                 $this->id = $loginUser['id'];
                 $this->created_at = $loginUser['created_at'];
                 $this->failed_attempts = $loginUser['failed_attempts'];
+
+                // Start the session
                 $sectionStarted = session_start();
 
+                // If the session could not be started
                 if (!$sectionStarted) {
                     throw new Exception("Session could not be started.", 500);
                 }
 
+                // Set the user's data in the session
                 $_SESSION["user"] = $this->toArray();
+                // Set the timestamp
                 $_SESSION["timestamp"] = time();
-
 
                 // Audit_generator("login", "success", "User login via password.", $this->email);
             } else { //ログインがうまくいかなかったら 
+                // If the password is incorrect, decrement the number of attempts
                 $attempt -= 1;
                 $loginFlag = "pass"; // because of password
             }
 
+            // Update the number of failed attempts
             QueryBuilder::create($dbCon)
                 ->update()
                 ->table('users')
