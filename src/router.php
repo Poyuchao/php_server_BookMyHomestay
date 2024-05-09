@@ -96,9 +96,9 @@ function executeRequest()
       }
 
       $database = new Database();
-      $authUser = $userSession ? $userSession['user'] : null;
+      $authUser = $userSession ? $userSession['user'] : null; // get the authenticated user from the session
 
-      $route[$i]->handler->__invoke($routeMatch['params'], $database, $authUser);
+      $route[$i]->handler->__invoke($routeMatch['params'], $database, $authUser); // invoke the handler function of the matched route
       return;
     }
   }

@@ -13,7 +13,7 @@ require_once ROOT . 'utils/get-homestay-extras.php';
 $GET_HOMES = Route::path('/homes')
   ->setMethod('GET')
   ->setHandler(function ($_, Database $database) {
-    $orderBy = parseOrder($_GET['order'], ['price', 'rating', 'createdAt'], 'price_ASC');
+    $orderBy = parseOrder($_GET['order'], ['price', 'rating', 'createdAt'], 'rating_DESC');
 
     $queryBuilder = QueryBuilder::create($database->connection)
       ->select()
@@ -29,16 +29,15 @@ $GET_HOMES = Route::path('/homes')
       // if ($_SESSION['user']['vegetarian']) {
       //   $queryBuilder->where('vegetarian_friendly', '=', $_SESSION['user']['vegetarian']);
       // }
-
-      
-
+    
+      $queryBuilder->where('rating', '>=',3); // display all the homestays with rating 4 and above
       // display all the matching homestays, based on user's location and  their budget , vegetarian friendly
       $queryBuilder->where('price_per_month', '<=', $_SESSION['user']['budget'])
         ->orWhere('location', '=', $_SESSION['user']['location'])
         ->orWhere('vegetarian_friendly', '=', $_SESSION['user']['vegetarian'])
-        
         ->limit(10); // display top 10 suitable homestays for user 
-       
+     
+      
     }
 
     $orderColumn = '';

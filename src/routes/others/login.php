@@ -50,37 +50,37 @@ require_once 'structures/Person.php';
 // }
 
 
-$POST_LOGIN = Route::path('/login')
-    ->setMethod('POST')
-    ->setHandler(function ($params, Database $database) {
-        $email = $_POST['email'];
-        // $password = password_hash($_POST["pass"], PASSWORD_BCRYPT, ["cost" => 10]);
-        $pass = $_POST['pass'];
-        // echo $password;
+// $POST_LOGIN = Route::path('/login')
+//     ->setMethod('POST')
+//     ->setHandler(function ($params, Database $database) {
+//         $email = $_POST['email'];
+//         // $password = password_hash($_POST["pass"], PASSWORD_BCRYPT, ["cost" => 10]);
+//         $pass = $_POST['pass'];
+//         // echo $password;
 
 
 
-        // try {
-        //     $sid = $_POST['sid'];
-        //     Session_Hanlder($sid);
-        //     echo json_encode(["message" => "Session is valid and active."]);
-        // } catch (Exception $e) {
-        //     http_response_code($e->getCode());
-        //     echo json_encode(["error" => $e->getMessage()]);
-        // }
+//         // try {
+//         //     $sid = $_POST['sid'];
+//         //     Session_Hanlder($sid);
+//         //     echo json_encode(["message" => "Session is valid and active."]);
+//         // } catch (Exception $e) {
+//         //     http_response_code($e->getCode());
+//         //     echo json_encode(["error" => $e->getMessage()]);
+//         // }
 
 
-        // if (isset($_POST["sid"])) {
-        //     Session_Hanlder($_POST["sid"]);
-        // }
+//         // if (isset($_POST["sid"])) {
+//         //     Session_Hanlder($_POST["sid"]);
+//         // }
 
-        try {
-            $person = new Person($email);
-            $session_id = $person->authenticate($pass, $database->connection);
-            echo json_encode(["session_id" => $session_id, "message" => "Login successful"]);
-        } catch (Exception $e) {
-            http_response_code($e->getCode());
-            echo json_encode(["error" => $e->getMessage()]);
-        }
-    })
-    ->build();
+//         try {
+//             $person = new Person($email);
+//             $session_id = $person->authenticate($pass, $database->connection);
+//             echo json_encode(["session_id" => $session_id, "message" => "Login successful"]);
+//         } catch (Exception $e) {
+//             http_response_code($e->getCode());
+//             echo json_encode(["error" => $e->getMessage()]);
+//         }
+//     })
+//     ->build();
