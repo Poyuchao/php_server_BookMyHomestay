@@ -7,6 +7,7 @@ require_once ROOT . 'routes/homestays/routes.php';
 require_once ROOT . 'utils/send-response.php';
 require_once ROOT . 'database/index.php';
 require_once ROOT . 'routes/admin/rehash.php';
+require_once ROOT . 'routes/admin/unlockAccount.php';
 require_once ROOT . 'routes/loadJson/loadJson.php';
 require_once ROOT . 'utils/decode-json.php';
 require_once ROOT . 'utils/get-session.php';
@@ -30,6 +31,7 @@ $ROUTES = [
     $POST_REGISTER,
     $POST_LOGOUT,
     $POST_REHASH,
+    $POST_UNLOCK_ACCOUNT,
     $POST_ADD_FAVORITE_HOMESTAY, //The $ADD_LIKED_HOMESTAY variable is an instance of the Route class that defines the route for adding a liked homestay.
     $POST_DELETE_FAVORITE_HOMESTAY, //The $DELETE_LIKED_HOMESTAY variable is an instance of the Route class that defines the route for deleting a liked homestay.
   ],
