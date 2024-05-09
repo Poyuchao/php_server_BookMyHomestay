@@ -11,35 +11,17 @@ require_once ROOT . 'utils/config.php';
 $POST_LOGIN = Route::path('/login')
     ->setMethod('POST')
     ->setHandler(function ($_, Database $database) {
-
-        $email = $_POST['email'];
-        // $password = password_hash($_POST["pass"], PASSWORD_BCRYPT, ["cost" => 10]);
-        $pass = $_POST['pass'];
-
-
-
-        // print_r("here is email: ".$email);
-        // print_r("here is pass: ".$pass);
-
+        // Check if the required keys are in the request
         checkKeys($_POST, ["email", "pass"]);
 
-        // print_r($loginUser);
-        // try {
-        //     $sid = $_POST['sid'];
-        //     Session_Hanlder($sid);
-        //     echo json_encode(["message" => "Session is valid and active."]);
-        // } catch (Exception $e) {
-        //     http_response_code($e->getCode());
-        //     echo json_encode(["error" => $e->getMessage()]);
-        // }
-
-
-        // if (isset($_POST["sid"])) {
-        //     Session_Hanlder($_POST["sid"]);
-        // }
+        // Getting the data from the request
+        $email = $_POST['email'];
+        $pass = $_POST['pass'];
 
         try {
+            // Create a new person object
             $person = new Person($email);
+            // Authenticate the user
             $jsonUser = $person->authenticate($pass, $database->connection);
 
             // print_r($jsonUser);
@@ -48,7 +30,6 @@ $POST_LOGIN = Route::path('/login')
                 'session' => session_id()
             ], 201);
         } catch (Exception $e) {
-
             send_error_response('Login failed', 400);
         }
     })
