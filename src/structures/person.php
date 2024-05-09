@@ -37,7 +37,7 @@ class Person
         // If the user is locked
         if ($loginUser && $loginUser["failed_attempts"] <= 0) {  // need to account lock
             $loginFlag = "lock";
-        } elseif ($loginUser) { //クエリの結果が1行以上ある (By ryoko)
+        } elseif ($loginUser) {
             // Get the number of failed attempts
             $attempt = $loginUser["failed_attempts"];
 
