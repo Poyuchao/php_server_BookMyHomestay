@@ -102,7 +102,7 @@ class Person
                     send_error_response("Username/Password Wrong.", 401);
 
                 case "lock":
-                    Audit_generator("login", "locked", "Acount is locked.", $this->email);
+                    Audit_generator("login", "failed", "account locked. Attempts(" . $attempt . ")", $this->email);
                     send_error_response("Account is locked.", 401);
                 default:
                     break;
