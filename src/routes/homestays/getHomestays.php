@@ -23,29 +23,39 @@ $GET_HOMES = Route::path('/homes')
       $queryBuilder->where('title', 'LIKE', '%' . $_GET['search'] . '%')
         ->orWhere('desc', 'LIKE', '%' . $_GET['search'] . '%');
     }
+ 
 
     if (isset($_SESSION['user'])) {
-      if ($_SESSION['user']['vegetarian']) {
-        $queryBuilder->where('vegetarian_friendly', '=', true);
-      }
+      // if ($_SESSION['user']['vegetarian']) {
+      //   $queryBuilder->where('vegetarian_friendly', '=', $_SESSION['user']['vegetarian']);
+      // }
 
-      $queryBuilder->where('location', 'LIKE', '%' . $_SESSION['user']['location'] . '%')
-        ->where('price_per_month', '<=', $_SESSION['user']['budget']);
+      
+
+      // display all the matching homestays, based on user's location and  their budget , vegetarian friendly
+      $queryBuilder->where('price_per_month', '<=', $_SESSION['user']['budget'])
+        ->orWhere('location', '=', $_SESSION['user']['location'])
+        ->orWhere('vegetarian_friendly', '=', $_SESSION['user']['vegetarian'])
+        
+        ->limit(10); // display top 10 suitable homestays for user 
+       
     }
 
     $orderColumn = '';
 
-    switch ($orderBy['column']) {
-      case 'price':
-        $orderColumn = 'price_per_month';
-        break;
-      case 'rating':
-        $orderColumn = 'rating';
-        break;
-      case 'createdAt':
-        $orderColumn = 'created_at';
-        break;
-    }
+      switch ($orderBy['column']) {
+        case 'price':
+          $orderColumn = 'price_per_month';
+          break;
+        case 'rating':
+          $orderColumn = 'rating';
+          break;
+        case 'createdAt':
+          $orderColumn = 'created_at';
+          break;
+      }
+
+   
 
     $queryBuilder->orderBy($orderColumn, $orderBy['direction']);
 

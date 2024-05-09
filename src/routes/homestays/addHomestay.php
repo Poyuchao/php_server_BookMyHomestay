@@ -36,9 +36,9 @@ $addHomestay = Route::path('/addHome')
       return;
     }
 
-    //verify the desc is not shorter than 10 characters
-    if (strlen($_POST['desc']) < 10) {
-      sendHttpCode(401, 'Description must be at least 20 characters');
+    //verify the desc is not shorter than 10 characters can't longer than 100 characters
+    if (strlen($_POST['desc']) < 10 || strlen($_POST['desc']) > 100) {
+      sendHttpCode(401, 'Description must be between 10 and 100 characters');
       return;
     }
 
