@@ -1,5 +1,5 @@
 <?php
-require_once ROOT . 'structures/Function.php';
+require_once ROOT . 'utils/function.php';
 
 
 class Person
@@ -35,7 +35,7 @@ class Person
         $attempt = null;
 
         // If the user is locked
-        if ($loginUser["failed_attempts"] <= 0) {  // need to account lock
+        if ($loginUser && $loginUser["failed_attempts"] <= 0) {  // need to account lock
             $loginFlag = "lock";
         } elseif ($loginUser) { //クエリの結果が1行以上ある (By ryoko)
             // Get the number of failed attempts
@@ -69,12 +69,12 @@ class Person
                 }
 
                 // Set the user's data in the session
-                $_SESSION["user"] = $this->toArray();
+                $_SESSION["user"] = $this->display_info();
                 // Set the timestamp
                 $_SESSION["timestamp"] = time();
 
                 // Audit_generator("login", "success", "User login via password.", $this->email);
-            } else { //ログインがうまくいかなかったら 
+            } else {
                 // If the password is incorrect, decrement the number of attempts
                 $attempt -= 1;
                 $loginFlag = "pass"; // because of password
@@ -94,18 +94,23 @@ class Person
         if ($loginFlag !== true) {
             switch ($loginFlag) {
                 case "email":
-                    //Audit_generator("login", "failed", "Invalid email address.", $this->email);
+                    Audit_generator("login", "failed", "Invalid email address.", $this->email);
                     send_error_response("Username/Password Wrong.", 401);
 
                 case "pass":
-                    //Audit_generator("login", "failed", "Invalid password. Attempts(" . $attempt . ")", $this->email);
+                    Audit_generator("login", "failed", "Invalid password. Attempts(" . $attempt . ")", $this->email);
                     send_error_response("Username/Password Wrong.", 401);
 
                 case "lock":
+                    Audit_generator("login", "locked", "Acount is locked.", $this->email);
                     send_error_response("Account is locked.", 401);
+                default:
+                    break;
             }
         }
-        return session_id();
+
+        Audit_generator("login", "success", "Login success.", $this->email);
+        return $this->display_info();
     }
     function display_info()
     {

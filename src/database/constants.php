@@ -10,8 +10,8 @@ define('QUERY_BUILDER_JOIN_FULL', 'FULL JOIN');
 date_default_timezone_set("America/Vancouver");
 
 define("DB_SERVER_NAME", "localhost");
-define("DB_USER_NAME", "phpAgentTeamA");
-define("DB_PASSWORD", "Arb89812345");
+define("DB_USER_NAME", "phpAgent");
+define("DB_PASSWORD", "test1234");
 define("DB_NAME", "bookmyhomestay");
 
 define('QUERY_BUILDER_AND_WHERE', 'AND');
