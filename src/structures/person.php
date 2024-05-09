@@ -37,7 +37,7 @@ class Person
         $loginFlag = "email";
         $attempt = null;
 
-        if ($loginUser["failed_attempts"] <= 0) {  // need to account lock
+        if ($loginUser&& $loginUser["failed_attempts"] <= 0) {  // need to account lock
             $loginFlag = "lock";
         } elseif ($loginUser) { //クエリの結果が1行以上ある
 
@@ -92,14 +92,15 @@ class Person
             switch ($loginFlag) {
                 case "email":
 
-                    //Audit_generator("login", "failed", "Invalid email address.", $this->email);
+                    Audit_generator("login", "failed", "Invalid email address.", $this->email);
                     send_error_response("Username/Password Wrong.", 401);
 
                 case "pass":
-                    //Audit_generator("login", "failed", "Invalid password. Attempts(" . $attempt . ")", $this->email);
+                    Audit_generator("login", "failed", "Invalid password. Attempts(" . $attempt . ")", $this->email);
                     send_error_response("Username/Password Wrong.", 401);
 
                 case "lock":
+                    Audit_generator("login", "failed", "account locked. Attempts(" . $attempt . ")", $this->email);
                     send_error_response("Account is locked.", 401);
             }
         }

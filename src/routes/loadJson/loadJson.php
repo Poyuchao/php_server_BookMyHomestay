@@ -151,7 +151,8 @@ $LOAD_HOMESTAYS_FROMJSON =  Route::path('/loadHomestays')
                     ->into('homestay_images')
                     ->values([
                         'homestay_id' => $createdHomestay['id'],
-                        'image_path' => str_replace('/img', 'http://localhost/homestayImg', $homestay['image_path'])
+                        //replace /img with http://localhost/webdev6/php_server_BookMyHomestay/src/homestayImg
+                        'image_path' => str_replace('/img', 'http://localhost/webdev6/php_server_BookMyHomestay/src/homestayImg', $homestay['image_path']) 
                     ])
                     ->execute();
             }
